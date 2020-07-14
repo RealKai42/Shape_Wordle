@@ -1,0 +1,24 @@
+{
+  "name": "github",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kaiyiwing/Shape_Wordle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kaiyiwing/Shape_Wordle/issues"
+  },
+  "homepage": "https://github.com/Kaiyiwing/Shape_Wordle#readme",
+  "devDependencies": {
+    "canvas": "^2.6.1",
+    "color-extensions": "^1.2.0",
+    "opencv4nodejs": "^5.6.0"
+  }
+}

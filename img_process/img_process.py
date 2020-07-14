@@ -28,12 +28,17 @@ def getInfo(filename):
     # 找到未知区域
     sure_fg = np.uint8(sure_fg)
     unknown = cv2.subtract(sure_bg, sure_fg)
+
+    # cv2.imshow('img', unknown)
+    # cv2.waitKey()
     # 类别标记
     ret, markers = cv2.connectedComponents(sure_fg)
+
     # 为所有的标记加1，保证背景是0而不是1
     markers = markers + 1
     # 现在让所有的未知区域为0
     markers[unknown == 255] = 0
+
     markers = cv2.watershed(img, markers)
     markers[markers == -1] = 1
 
