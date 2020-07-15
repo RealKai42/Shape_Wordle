@@ -1,5 +1,8 @@
 /**
  * 对图形进行预处理, 返回distanceField group contour 信息
+ * distance Field 格式 [[[x,y,value],[x,y,value]], [[x,y,value],[x,y,value]] 二维数组每个子数组是一个region
+ * group 格式为 width*height 数组，值1为背景，其他值代表分组，
+ * contour 二维数组，每个子数组为一个region的contour，与distance field对应
  */
 
 const cv = require('opencv4nodejs')
@@ -53,34 +56,40 @@ function getGroup(image, options) {
   return markersData
 }
 
-function getDistAndContour(groupData) {
-  let markers = JSON.parse(JSON.stringify(groupData))
-  // 将markers中背景设置为0, 非背景设置为1
-  markers = markers.map(item => {
-    return newItem = item.map(i => i === 1 ? 0 : 1)
-  })
-  // 获取distance field
-  const newImage = new cv.Mat(markers, cv.CV_8UC1)
-  const distImg = newImage.distanceTransform(cv.DIST_L2, cv.DIST_MASK_5)
-  // 将distance field中背景部分替换成-1
-  let distData = distImg.getDataAsArray()
-  for (let i = 0; i < distData.length; i++) {
-    for (let j = 0; j < distData[i].length; j++) {
-      if (markers[i][j] == 0)
-        distData[i][j] = -1
-    }
-  }
-  // 获取contour
-  const contour = newImage.findContours(cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS)
-  // console.log(contour[0].getPoints()[0].x)
-  // 处理contour数据
+function getDistAndContour(markers) {
+  // let markers = JSON.parse(JSON.stringify(groupData))
+  // 获取数据内所有的组，去除背景1
+  const labels = unique([].concat.apply([], markers)).splice(1)
+  let distData = []
   let contourData = []
-  for (let i in contour) {
-    contourData.push([])
-    for (j of contour[i].getPoints()) {
-      contourData[i].push([j.x, j.y])
+  labels.forEach(label => {
+    // 复制一个新markers, 非该次处理的分组设置为0，该次处理的设置为1
+    newMarkers = markers.map(item => {
+      return newItem = item.map(i => i === label ? 1 : 0)
+    })
+    // 获取distance field
+    const newImage = new cv.Mat(newMarkers, cv.CV_8UC1)
+    const distImg = newImage.distanceTransform(cv.DIST_L2, cv.DIST_MASK_5)
+    const distImgArray = distImg.getDataAsArray()
+    distData.push([])
+    distData_i = label - 2
+    for (let y = 0; y < distImgArray.length; y++) {
+      for (let x = 0; x < distImgArray[y].length; x++) {
+        if (distImgArray[y][x] !== 0) {
+          distData[distData_i].push([x, y, distImgArray[y][x]])
+        }
+      }
     }
-  }
+    // 获取contour
+    const contour = newImage.findContours(cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS)
+    // 处理contour数据
+    contourData.push([])
+    for (let i in contour) {
+      for (j of contour[i].getPoints()) {
+        contourData[distData_i].push([j.x, j.y])
+      }
+    }
+  })
   return [distData, contourData]
 }
 
@@ -196,6 +205,9 @@ function getMaxValue(arr) {
   return max
 }
 
+function unique(arr) {
+  return Array.from(new Set(arr))
+}
 module.exports = {
   preProcessImg
 }
