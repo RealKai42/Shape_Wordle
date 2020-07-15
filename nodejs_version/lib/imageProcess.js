@@ -4,7 +4,7 @@
 
 const cv = require('opencv4nodejs')
 
-function segmentation(image, options) {
+function preProcessImg(image, options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage, options)
   const [distData, contourData] = getDistAndContour(groupData)
@@ -197,5 +197,5 @@ function getMaxValue(arr) {
 }
 
 module.exports = {
-  segmentation
+  preProcessImg
 }
