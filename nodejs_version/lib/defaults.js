@@ -41,6 +41,8 @@ const defaultOptions = {
     '#00af3e',
   ],
 
+  eps: 0.0000001,
+
 }
 
 module.exports = {

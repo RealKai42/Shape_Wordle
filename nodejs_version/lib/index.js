@@ -3,6 +3,7 @@ const { defaultOptions } = require('./defaults')
 const { preprocessDistanceField } = require('./preprocessDistanceField')
 const { preprocessWords } = require('./preprocessWords')
 const { allocateWords } = require('./allocateWords')
+const { generateWordle } = require('./wordle')
 const cv = require('opencv4nodejs')
 
 
@@ -26,9 +27,8 @@ class ShapeWordle {
     let words = splitText(text, this.options)
     const { keywords, fillingWords } = preprocessWords(words, this.options)
     allocateWords(keywords, this.regions, area, this.options)
+    generateWordle(keywords, this.regions, group, this.options)
     console.log(keywords)
-
-
 
 
 
