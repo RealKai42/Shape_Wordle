@@ -1,5 +1,5 @@
 const { lemmatizer } = require("lemmatizer");
-const { WordTokenizer, stopwords } = require('natural')
+const { WordTokenizer, stopwords } = require("natural")
 const nodejieba = require("nodejieba");
 
 
@@ -9,6 +9,7 @@ function splitText(text, option) {
   let words = []
   if (chinesePattern.test(text)) {
     // 中文分词
+    option.language = 'cn'
     const tokens = nodejieba.cutAll(text.replace(/\n/g, ''))
     const fs = require('fs')
     const stopwordsCN = fs.readFileSync('stopword_zh.txt', 'utf8').split('\n')
@@ -20,6 +21,7 @@ function splitText(text, option) {
     })
   } else {
     // 英语分词
+    option.language = 'en'
     const tokenizer = new WordTokenizer()
     const tokens = tokenizer.tokenize(text)
     tokens.forEach(word => {
@@ -48,7 +50,7 @@ function splitText(text, option) {
   for (let word of words) {
     word.weight = word.weight / max_count
   }
-  return words.slice(0, option.wordsNum)
+  return words
 }
 
 module.exports = {

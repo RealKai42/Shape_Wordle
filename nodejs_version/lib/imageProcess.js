@@ -1,17 +1,19 @@
 /**
- * 对图形进行预处理, 返回distanceField group contour 信息
+ * 对图形进行预处理, 返回distanceField group contour area信息
  * distance Field 格式 [[[x,y,value],[x,y,value]], [[x,y,value],[x,y,value]] 二维数组每个子数组是一个region
  * group 格式为 width*height 数组，值1为背景，其他值代表分组，
  * contour 二维数组，每个子数组为一个region的contour，与distance field对应
+ * area 一维数组
  */
 
 const cv = require('opencv4nodejs')
+const { Contour } = require('opencv4nodejs')
 
 function preProcessImg(image, options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage, options)
-  const [distData, contourData] = getDistAndContour(groupData)
-  return { 'dist': distData, 'contour': contourData, 'group': groupData }
+  const [distData, contourData, areaData] = getDistAndContour(groupData)
+  return { 'dist': distData, 'contour': contourData, 'group': groupData, 'area': areaData }
 }
 
 function getGroup(image, options) {
@@ -62,6 +64,7 @@ function getDistAndContour(markers) {
   const labels = unique([].concat.apply([], markers)).splice(1)
   let distData = []
   let contourData = []
+  let areaData = []
   labels.forEach(label => {
     // 复制一个新markers, 非该次处理的分组设置为0，该次处理的设置为1
     newMarkers = markers.map(item => {
@@ -82,15 +85,19 @@ function getDistAndContour(markers) {
     }
     // 获取contour
     const contour = newImage.findContours(cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS)
+    // console.log(contour)
     // 处理contour数据
     contourData.push([])
+    let area = 0
     for (let i in contour) {
+      area += parseInt(contour[i].area)
       for (j of contour[i].getPoints()) {
         contourData[distData_i].push([j.x, j.y])
       }
     }
+    areaData.push(area)
   })
-  return [distData, contourData]
+  return [distData, contourData, areaData]
 }
 
 function cutImage(image, options) {
