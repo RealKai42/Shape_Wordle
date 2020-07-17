@@ -46,6 +46,11 @@ const calcScreenMinFontSize = () => {
   return 0
 }
 
+//保留n位小数
+function roundFun(value, n) {
+  return Math.round(value * Math.pow(10, n)) / Math.pow(10, n);
+}
+
 const measureTextHWCache = new LRU({
   max: 2000,
   maxAge: 1000 * 60 * 30
@@ -109,4 +114,5 @@ module.exports = {
   measureTextSize,
   measureTextHW,
   calcScreenMinFontSize,
+  roundFun,
 }

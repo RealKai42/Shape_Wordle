@@ -10,23 +10,26 @@ const cv = require('opencv4nodejs')
 
 class ShapeWordle {
   constructor(options = {}) {
-    this.options = {
-      ...defaultOptions,
-      ...options,
-    }
+    this.userOptions = options
   }
 
   generate(text, image) {
+    // 计算时，会修改options中的数据，所以每次generate重新取一下option
+    this.options = {
+      ...defaultOptions,
+      ...this.userOptions,
+    }
     const { dist, contour, group, area } = preProcessImg(image, this.options)
     const { width, height } = this.options
 
-    this.regions = preprocessDistanceField(dist, contour, width, height)
+    this.regions = preprocessDistanceField(dist, contour, this.options)
     // TODO：此处有一个bug，当‘const { splitText } = require('./textProcess.js')’放在文件首时
     // 会导致preProcessImg中计算group的部分出现问题
     const { splitText } = require('./textProcess.js')
     let words = splitText(text, this.options)
     const { keywords, fillingWords } = preprocessWords(words, this.options)
     allocateWords(keywords, this.regions, area, this.options)
+    console.log(keywords)
     generateWordle(keywords, this.regions, group, this.options)
 
     // 获取单词位置

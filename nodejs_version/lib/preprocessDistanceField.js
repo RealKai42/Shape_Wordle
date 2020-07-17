@@ -1,4 +1,6 @@
-function preprocessDistanceField(dists, contours, width, height) {
+const { roundFun } = require('./utils')
+
+function preprocessDistanceField(dists, contours, { width, height }) {
   // 对输入的distance field 和 contour 进行预处理，处理成多个region
   // {boudary, dist, extremePoints}
 
@@ -87,7 +89,9 @@ function preprocessDistanceField(dists, contours, width, height) {
       .sort((a, b) => b.value - a.value)
     const sum = extremePoint.reduce((total, { value }) => total + value * value, 0)
     extremePoint.forEach(e => {
-      e.ratio = (e.value * e.value) / sum
+      e.ratio = roundFun((e.value * e.value) / sum, 2)
+      e.value = roundFun(e.value, 2)
+
     })
     region.extremePoints = extremePoint
   })

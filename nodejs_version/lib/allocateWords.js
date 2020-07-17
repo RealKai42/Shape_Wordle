@@ -3,7 +3,7 @@
  */
 
 const { composeRT } = require("opencv4nodejs")
-const { measureTextSize } = require("./utils")
+const { measureTextSize, roundFun } = require("./utils")
 
 function allocateWords(words, regions, areas, options) {
   allocateWordsToRegions(words, regions, areas, options)
@@ -88,6 +88,7 @@ function allocateWordsToExtremePoint(words, regions, areas, options) {
       ep.epNumber = ep.value < 20 ? 0 : Math.round(ep.ratio * region.wordsNum)
       wordsSum += ep.epNumber
       ep.epWeight = Math.max(ep.epWeight, wordsMinWeight)
+      ep.epWeight = roundFun(ep.epWeight, 2)
     })
     if (wordsSum !== region.wordsNum) {
       region.extremePoints[0].epNumber += region.wordsNum - wordsSum

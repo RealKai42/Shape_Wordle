@@ -43,9 +43,11 @@ const defaultOptions = {
     '#29245c',
     '#00af3e',
   ],
-
   eps: 0.0000001,
 
+
+  // 调试参数
+  debug: true,
 }
 
 module.exports = {

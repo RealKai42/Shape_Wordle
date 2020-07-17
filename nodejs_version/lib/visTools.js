@@ -7,6 +7,7 @@ const fs = require('fs')
 
 const colours = ['#0081b4', '#e5352b', '#e990ab', '#ffd616', '#96cbb3', '#91be3e', '#39a6dd', '#eb0973', '#dde2e0', '#949483', '#f47b7b',
   '#9f1f5c', '#ef9020', '#00af3e', '#85b7e2', '#29245c', '#00af3e', '#ffffff'];
+const prefix = 'output/VisTool_'
 
 function groupVis(groupData, options, outputDir) {
   const canvas = createCanvas(options.width, options.height)
@@ -32,7 +33,7 @@ function groupVis(groupData, options, outputDir) {
   ctx.putImageData(imgData, 0, 0)
   const buf = canvas.toBuffer();
 
-  fs.writeFileSync(outputDir + '/groupVis.png', buf);
+  fs.writeFileSync(`${outputDir}/${prefix}groupVis.png`, buf);
 }
 
 function distanceVis(distData, options, outputDir) {
@@ -73,7 +74,8 @@ function distanceVis(distData, options, outputDir) {
 
   ctx.putImageData(imgData, 0, 0)
   const buf = canvas.toBuffer();
-  fs.writeFileSync(outputDir + '/distanceVis.png', buf);
+  fs.writeFileSync(`${outputDir}/${prefix}distanceVis.png`, buf);
+  return imgData
 }
 
 function contourVis(contourData, options, outputDir) {
@@ -94,9 +96,99 @@ function contourVis(contourData, options, outputDir) {
   }
   ctx.putImageData(imgData, 0, 0)
   const buf = canvas.toBuffer()
-  fs.writeFileSync(outputDir + '/contourVis.png', buf)
+  fs.writeFileSync(`${outputDir}/${prefix}contourVis.png`, buf)
 }
 
+function extremePointVis(distData, regions, options, outputDir, drawText = true, outputInfo = true) {
+  const distanceImageData = distanceVis(distData, options, outputDir)
+  const canvas = createCanvas(options.width, options.height)
+  const ctx = canvas.getContext('2d')
+  ctx.putImageData(distanceImageData, 0, 0)
+  // console.log(regions.map(region => region.extremePoints))
+  regions.forEach(region => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      if (outputInfo)
+        console.log(`regionID:${point.regionID} epID: ${epID}\n`, point)
+      ctx.beginPath()
+      ctx.arc(point.pos[0], point.pos[1], 3, 0, 360)
+      ctx.fillStyle = 'yellow'
+      ctx.fill()
+      ctx.closePath()
+
+      if (drawText) {
+        ctx.font = '15px Arial';
+        ctx.fillStyle = 'black'
+        let info = `
+        value: ${point.value}
+        regionID:${point.regionID}
+        epID:${epID}
+        `
+        const width = ctx.measureText(info).actualBoundingBoxRight
+        ctx.fillText(info, point.pos[0] - width, point.pos[1]);
+      }
+    })
+  })
+  const ImageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}extremePointVis.png`, buf)
+  return ImageData
+}
+
+function allocateWordsVis(distData, regions, keywords, options, outputDir) {
+  let epImageData = distanceVis(distData, options, outputDir)
+  const canvas = createCanvas(options.width, options.height)
+  const ctx = canvas.getContext('2d')
+  ctx.putImageData(epImageData, 0, 0)
+  regions.forEach(region => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      ctx.beginPath()
+      ctx.arc(point.pos[0], point.pos[1], 3, 0, 360)
+      ctx.fillStyle = 'yellow'
+      ctx.fill()
+      ctx.closePath()
+    })
+  })
+  epImageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  regions.forEach(region => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      ctx.font = '15px Arial';
+      ctx.fillStyle = 'black'
+      let info = `value: ${point.value}\nnumber:${point.epNumber}\nregionID:${point.regionID}\nepID:${epID}`
+      const width = ctx.measureText(info).actualBoundingBoxRight
+      ctx.fillText(info, point.pos[0] - width, point.pos[1])
+    })
+  })
+  let buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_Numbers.png`, buf)
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.putImageData(epImageData, 0, 0)
+  regions.forEach((region, regionID) => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      ctx.font = '10px Arial'
+      ctx.fillStyle = 'black'
+      let info = ''
+      keywords.forEach(word => {
+        if (word.regionID === regionID && word.epID === epID) {
+          info += `${word.name},${word.weight}\n`
+        }
+      })
+      console.log(`regionID:${regionID} epID${epID} words: ${info.replace(/\n/g, '  ')}`)
+      const width = ctx.measureText(info).actualBoundingBoxRight
+      ctx.fillText(info, point.pos[0] - width, point.pos[1])
+    })
+  })
+
+
+
+
+  buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_words.png`, buf)
+}
 
 
 var hexToRgb = function (hex) {
@@ -117,4 +209,6 @@ module.exports = {
   groupVis,
   distanceVis,
   contourVis,
+  extremePointVis,
+  allocateWordsVis,
 }

@@ -8,6 +8,7 @@ const { createCanvas } = require('canvas')
 
 
 function draw(keywords, fillingWords, options) {
+  // console.log(keywords.map(word => word.fontSize))
   const { width, height, fontWeight, fontFamily, resizeFactor } = options
 
   const canvas = createCanvas(width * resizeFactor, height * resizeFactor)

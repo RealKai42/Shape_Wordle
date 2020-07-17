@@ -1,3 +1,4 @@
+const { roundFun } = require('./utils')
 
 function preprocessWords(words, options) {
   const { angleMode, language } = options
@@ -19,7 +20,7 @@ const separateWords = (words, options) => {
     .slice(0, keywordsNum)
     .map(({ name, weight }) => ({
       name: name.trim(),
-      weight: weight < 0.02 ? 0.02 : weight,
+      weight: weight < 0.02 ? 0.02 : roundFun(weight, 3),
       color: keywordColor,
       fontFamily,
     }))
