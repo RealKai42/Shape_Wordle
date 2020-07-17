@@ -33,7 +33,6 @@ function allocateWordsToRegions(words, regions, areas, options) {
   const valueMax = Math.max(...values)
   const valueMaxId = values.indexOf(valueMax)
 
-  const wordsNums = regions.map(region => region.wordsNum)
 
   // 给每个区域分配单词数量和权重限制
   let wordsSum = 0
@@ -51,6 +50,7 @@ function allocateWordsToRegions(words, regions, areas, options) {
   if (wordsSum !== keywordsNum) {
     regions[areaMaxId].wordsNum += keywordsNum - wordsSum
   }
+  const wordsNums = regions.map(region => region.wordsNum)
 
   let currRegion = baseOnAreaOrDisValue ? areaMaxId : valueMaxId
 
@@ -60,6 +60,7 @@ function allocateWordsToRegions(words, regions, areas, options) {
     word.regionID = -1
     do {
       if (wordsNums[currRegion] > 0 && word.weight <= regions[currRegion].wordsWeight) {
+        // console.log(word.name)
         if ((regions[currRegion].extremePoints[0].value < 24 && word.name.length <= 5) || regions[currRegion].extremePoints[0].value >= 24) {
           word.regionID = currRegion
           wordsNums[currRegion]

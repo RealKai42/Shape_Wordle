@@ -12,7 +12,7 @@ function splitText(text, option) {
     option.language = 'cn'
     const tokens = nodejieba.cutAll(text.replace(/\n/g, ''))
     const fs = require('fs')
-    const stopwordsCN = fs.readFileSync('stopword_zh.txt', 'utf8').split('\n')
+    const stopwordsCN = fs.readFileSync(__dirname + '/stopword_zh.txt', 'utf8').split('\n')
     tokens.forEach(word => {
       if (word.length < 2 || (option.stopwords && stopwordsCN.includes(word)) || (option.filterNumber && numberPattern.test(word))) { return }
       else {

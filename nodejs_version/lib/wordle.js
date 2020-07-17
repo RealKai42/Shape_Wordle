@@ -15,16 +15,18 @@ function generateWordle(words, regions, group, options) {
   const randomArray = createRandomArray(words.length)
   const deepCopyPosition = () => words.map(word => [...(word.position || [])])
   let prePosition = null
+
   words.forEach(word => {
     createBox(word, options)
     word.state = false
   })
 
-  key: for (let regionID = 0; regionID < regions.length; regionID++) {
+
+
+  for (let regionID = 0; regionID < regions.length; regionID++) {
     // 每次排布一个region的单词
     const region = regions[regionID]
     if (isMaxMode) {
-
     } else {
       let sucess = true
       for (let cont = 0; cont < 1; cont++) {
@@ -44,7 +46,6 @@ function generateWordle(words, regions, group, options) {
               group,
               options,
             )
-            // break key
             if (wordle.state === false) {
               // wordlepara.state 这个状态代表有没有单词在运行Wordle算法的时候旋转到了图形外面
               sucess = false
@@ -71,7 +72,6 @@ function generateWordle(words, regions, group, options) {
         } else {
           prePosition = deepCopyPosition()
         }
-
 
       }
 
@@ -152,10 +152,6 @@ function placeWord(word, center, regionID, group, options) {
 
   word.position = [x, y]
 }
-
-
-
-
 
 
 

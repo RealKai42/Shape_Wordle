@@ -20,6 +20,32 @@ function measureTextSize(text, fontSize, fontName) {
   return size
 }
 
+const calcScreenMinFontSize = () => {
+  // 确定屏幕最小的fontsize
+
+  //该方法用于测定浏览器能显示的最小字体大小
+  //记录前一size中W与m的宽度，与下一size中宽度进行比较
+  //如果相同，则返回size+1（即Browser能显示的字体的最小值）
+  const ctx = createCanvas(200, 200).getContext('2d')
+  let size = 20
+  let hanWidth = undefined, mWidth = undefined
+  while (size) {
+    ctx.font = `${size}px sans-serif`;
+    if ((ctx.measureText('\uFF37').width === hanWidth) &&
+      (ctx.measureText('m').width) === mWidth) {
+      return size + 1
+    }
+
+    //\uFF37是大写的W
+    hanWidth = ctx.measureText('\uFF37').width
+    mWidth = ctx.measureText('m').width
+
+    size--
+  }
+
+  return 0
+}
+
 const measureTextHWCache = new LRU({
   max: 2000,
   maxAge: 1000 * 60 * 30
@@ -81,5 +107,6 @@ const measureTextHW = (left, top, width, height, fontSize, fontName, text) => {
 
 module.exports = {
   measureTextSize,
-  measureTextHW
+  measureTextHW,
+  calcScreenMinFontSize,
 }

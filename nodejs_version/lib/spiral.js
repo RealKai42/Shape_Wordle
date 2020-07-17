@@ -12,18 +12,19 @@ function wordleAlgorithm(drawnWords, word, regionID, regions, group, options) {
     const startPoint = extremePoints[word.epID].pos
     for (let i = 0; i < 5; i++) {
       const newPoint = iterate(dist, startPoint, word.position, canvasWidth, canvasHeight)
+      // console.log(newPoint)
       if (newPoint) {
         word.position = [...newPoint]
       } else {
         break
       }
     }
-
     if (lastCollidedItem !== null && isOverlap(lastCollidedItem, word)) continue
 
     if (!isInShapeWord(word, options, group, regionID, regions)) continue
 
     let foundOverlap = false
+
     for (const drawnWord of drawnWords) {
       if (isOverlap(drawnWord, word)) {
         // 发现碰撞，则传入碰撞的点
@@ -148,7 +149,7 @@ const getCornerPoints = (word, ratio) => {
   return p
 }
 
-const isIntersected = (boundary, p1, p2) => {
+const isIntersected = (contour, p1, p2) => {
   //检测线段是否和边界相交
   const isIntersectedPoint2 = (aa, bb, cc, dd) => {
     //检测两个线段是否相交的方法
@@ -178,13 +179,13 @@ const isIntersected = (boundary, p1, p2) => {
   }
 
   let ok = false
-  for (let i = 0; i < boundary.length - 1; i++) {
-    ok = isIntersectedPoint2(p1, p2, boundary[i], boundary[i + 1])
+  for (let i = 0; i < contour.length - 1; i++) {
+    ok = isIntersectedPoint2(p1, p2, contour[i], contour[i + 1])
     if (ok) break
   }
   if (ok) return true
   else {
-    return isIntersectedPoint2(p1, p2, boundary[boundary.length - 1], boundary[0])
+    return isIntersectedPoint2(p1, p2, contour[contour.length - 1], contour[0])
   }
 }
 
@@ -199,7 +200,7 @@ const isInShapePoint = (point, canvasWidth, canvasHeight, group, regionID) => {
     x < canvasWidth &&
     y < canvasHeight
   ) {
-    return group[y][x] === regionID
+    return group[y][x] - 2 === regionID
   } else {
     return false
   }
@@ -216,13 +217,12 @@ const isInShapeWord = (word, { width: canvasWidth, height: canvasHeight }, group
     isInShapePoint(p[2], canvasWidth, canvasHeight, group, regionID) &&
     isInShapePoint(p[3], canvasWidth, canvasHeight, group, regionID)
   if (!ok) return false
-
-  for (let { boundary } of regions) {
+  for (let { contour } of regions) {
     const ok =
-      !isIntersected(boundary, p[0], p[1]) &&
-      !isIntersected(boundary, p[1], p[2]) &&
-      !isIntersected(boundary, p[2], p[3]) &&
-      !isIntersected(boundary, p[3], p[0])
+      !isIntersected(contour, p[0], p[1]) &&
+      !isIntersected(contour, p[1], p[2]) &&
+      !isIntersected(contour, p[2], p[3]) &&
+      !isIntersected(contour, p[3], p[0])
     if (!ok) return false
   }
 
@@ -233,7 +233,6 @@ const isInShapeWord = (word, { width: canvasWidth, height: canvasHeight }, group
 const iterate = (dist, startPoint, pos, canvasWidth, canvasHeight) => {
   // 根据螺旋线迭代取得一个位置
   const point = { x: pos[0], y: pos[1] }
-
   // 法线方向
   const normal = computeSDF(dist, point.x, point.y)
   normal[0] = -normal[0]
@@ -276,7 +275,8 @@ const iterate = (dist, startPoint, pos, canvasWidth, canvasHeight) => {
 
   // 检测是否出界
   if (point.x && point.y) {
-    if (dist[Math.floor(point.x)][Math.floor(point.y)] >= 0) {
+
+    if (dist[Math.floor(point.x)][Math.floor(point.y)] <= 0) {
       return false
     }
     if (point.x > (canvasWidth - 2) || point.x < 2) {
@@ -303,7 +303,7 @@ const computeSDF = (data, px, py) => {
   for (let i = 0; i < kernelSize; i++) {
     for (let j = 0; j < kernelSize; j++) {
       const offsetX = i - offset, offsetY = j - offset
-      const local = data[wordPosition.x + offsetX][wordPosition.y + offsetY]
+      const local = -data[wordPosition.x + offsetX][wordPosition.y + offsetY]
       localGrad.x += local * gradX[i][j]
       localGrad.y += local * gradY[i][j]
     }

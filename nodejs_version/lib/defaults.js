@@ -13,13 +13,16 @@ const defaultOptions = {
   language: 'cn', // 仅支持中英，在textProcess会自动修改
   baseOnAreaOrDisValue: true, // 分配单词到region时根据面积还是根据distance value
   isMaxMode: false, // true之后，会不考虑数据的真实度，尽可能放大单词以填充区域
-  maxFontSize: 100,
+  maxFontSize: 100, // 在算法中会动态修改
   minFontSize: 2,
 
   keywordColor: '#000000',
   fillingWordColor: '#000000',
+  fillingFontSize: 10,
   cnFontFamily: 'siyuan',
   enFontFamily: 'Arial',
+  fontWeight: 'normal',
+  resizeFactor: 4,
   // 各region单词的颜色
   colors: [
     '#000000',
