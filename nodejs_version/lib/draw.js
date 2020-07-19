@@ -49,8 +49,8 @@ function draw(keywords, fillingWords, options) {
 function drawKeywords(words, options) {
   return words.filter(word => word.state && word.position).map(word => ({
     name: word.name,
-    x: word.position[0],
-    y: word.position[1],
+    x: word.position[0] - word.width / 2,
+    y: word.position[1] + word.height / 2,
     fontSzie: word.fontFamily,
     fontSize: word.fontSize,
     color: word.color,

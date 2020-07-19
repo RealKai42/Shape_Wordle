@@ -1,7 +1,8 @@
 /**
  * 生成思想为将每个region内每个极点的单词随机放置在极点附近
  * 然后对每个单词以极点为中心，当前位置为初始位置，使用螺旋线进行排布
- * 注意 word的坐标坐标原点为单词左下角, box的原点也是左下角
+ * 注意 word的坐标坐标原点为单词中心, box的原点是左下角
+ * 修改为原点在中心
  */
 
 const { measureTextSize } = require("./utils")
@@ -77,6 +78,7 @@ function createWordBox(word, options) {
   word.descent = descent
   word.ascent = ascent
   word.gap = 2
+
   word.box.push([
     0,
     descent + word.gap,
@@ -84,7 +86,7 @@ function createWordBox(word, options) {
     height + 2 * word.gap
   ])
   // 对于权重大于0.5的, 对每个字母建立box
-  if ((word.weight - 0.5) > eps) {
+  if ((word.weight - 0.1) > eps) {
     let x = 0
     for (let i = 0; i < word.name.length; i++) {
       let { width: charW, height: charH, ascent, descent } = measureTextSize(word.name[i], fontSize, word.fontFamily)

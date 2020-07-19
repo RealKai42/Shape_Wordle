@@ -46,6 +46,7 @@ function drawFillingWords(keywords, fillingWords, group, options) {
   fillingWords.forEach(word => {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
   })
+
   fontSize -= 2
   fillingWords.forEach(word => {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
@@ -53,15 +54,36 @@ function drawFillingWords(keywords, fillingWords, group, options) {
   fillingWords.forEach(word => {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
   })
-  fontSize -= 2
+
+  fontSize -= 3
   fillingWords.forEach(word => {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
   })
   fillingWords.forEach(word => {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
   })
+
+  fontSize -= 3
+  fillingWords.forEach(word => {
+    putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
+  })
+  fillingWords.forEach(word => {
+    putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
+  })
+
+  fontSize -= 3
+  fillingWords.forEach(word => {
+    putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
+  })
+  fillingWords.forEach(word => {
+    putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
+  })
+
   // console.log(wordLayouts)
 
+  // console.log(fontSize)
+
+  // gridVis(grid)
   return wordLayouts
 }
 
@@ -172,7 +194,7 @@ function getTextPixels(word, rotateDeg, fontSize, gridSettings) {
   const { width, height, ascent, descent } = measureTextSize(word.name, fontSize, fontFamily)
   const wordWidth = Math.ceil(width * Math.abs(Math.sin(rotateDeg)) + height * Math.abs(Math.cos(rotateDeg)))
   const wordHeight = Math.ceil(width * Math.abs(Math.cos(rotateDeg)) + height * Math.abs(Math.sin(rotateDeg)))
-  const wordGap = 2, canvasGap = 4
+  const wordGap = 0, canvasGap = 4
   // const x = wordGap, y = height - descent + wordGap
   const x = 100, y = 100
   const wordPixels = []
@@ -216,13 +238,13 @@ function createGrid(keywords, group, gridSettings) {
   ctx.fillRect(0, 0, canvasWidth, canvasHeight)
   keywords.forEach(word => {
     if (word.state) {
-      const { name, position, fontFamily, angle, fontSize } = word
+      const { name, position, fontFamily, angle, fontSize, width, height } = word
       const [x, y] = position
 
       ctx.save()
       ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
       ctx.fillStyle = '#FF0000'
-      ctx.translate(x, y)
+      ctx.translate(x - width / 2, y + height / 2)
       ctx.rotate(angle)
       ctx.textAlign = 'start'
       ctx.textBaseline = 'alphabetic'

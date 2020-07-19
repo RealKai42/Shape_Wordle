@@ -52,14 +52,18 @@ function isOverlap(word1, word2) {
   // 对字母进行像素级的overlap碰撞检测
   const getWordPoint = word => {
     const points = [] // 子数组格式为[left top, right top, right bottom, left bottom]
-    const { position: wordPos, angle } = word
+    const { position: wordPos, angle, width, height } = word
 
     word.box.forEach(box => {
       const boxWidth = box[2]
       const boxHeight = box[3]
-      const boxPos = [box[0] + wordPos[0], box[1] + wordPos[1]]
+      const boxPos = [box[0] + wordPos[0] - width / 2, box[1] + wordPos[1] + height / 2]
 
       points.push([
+        // [boxPos[0], boxPos[1] - boxHeight],
+        // [boxPos[0] + boxWidth, boxPos[1] - boxHeight],
+        // [boxPos[0] + boxWidth, boxPos[1]],
+        // [boxPos[0], boxPos[1]],
         [boxPos[0], boxPos[1] - boxHeight],
         [boxPos[0] + boxWidth, boxPos[1] - boxHeight],
         [boxPos[0] + boxWidth, boxPos[1]],
@@ -108,7 +112,6 @@ function isOverlap(word1, word2) {
   const p1 = getWordPoint(word1)
   const p2 = getWordPoint(word2)
 
-  // console.log(p1)
 
   for (let i = 0; i < p1.length; i++) {
     for (let j = 0; j < p2.length; j++) {
@@ -145,13 +148,17 @@ function isInShape(word, { width: canvasWidth, height: canvasHeight }, group, re
 
 function getCornerPoints(word) {
   // 获得单词四个角的坐标
-  const { position: pos, angle } = word
+  const { position: pos, angle, width, height } = word
 
   const p = [
-    [pos[0], pos[1] - word.height], // left top
-    [pos[0] + word.width, pos[1] - word.height], // right top
-    [pos[0] + word.width, pos[1]], // right bottom
-    [pos[0] - word.width, pos[1] + word.height], // left bottom
+    // [pos[0], pos[1] - word.height], // left top
+    // [pos[0] + word.width, pos[1] - word.height], // right top
+    // [pos[0] + word.width, pos[1]], // right bottom
+    // [pos[0] - word.width, pos[1] + word.height], // left bottom
+    [pos[0] - width / 2, pos[1] - height / 2], // left top
+    [pos[0] + width / 2, pos[1] - height / 2], // right top
+    [pos[0] + width / 2, pos[1] + height / 2], // right bottom
+    [pos[0] - width / 2, pos[1] + height / 2], // left bottom
   ]
 
   if (angle != 0) {

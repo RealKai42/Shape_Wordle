@@ -20,7 +20,7 @@ const defaultOptions = {
   fillingWordColor: '#ff0000',
   fillingFontSize: 10,
   cnFontFamily: 'siyuan',
-  enFontFamily: 'Arial',
+  enFontFamily: 'Hobo std',
   fontWeight: 'normal',
   resizeFactor: 4,
   // 各region单词的颜色

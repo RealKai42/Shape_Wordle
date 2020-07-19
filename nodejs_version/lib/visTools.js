@@ -275,7 +275,7 @@ function debugDraw(keywords, options, canvasInput = null) {
   }
 
 
-  const drawBox = false
+  const drawBox = true
 
   keywords.forEach(word => {
     if (word.position) {
@@ -286,7 +286,7 @@ function debugDraw(keywords, options, canvasInput = null) {
       ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
       // ctx.fillStyle = color
       ctx.fillStyle = word.state ? 'black' : 'red'
-      ctx.translate(position[0], position[1])
+      ctx.translate(position[0] - width / 2, position[1] + height / 2)
       ctx.rotate(angle)
       ctx.textAlign = 'start'
       ctx.textBaseline = 'alphabetic'
