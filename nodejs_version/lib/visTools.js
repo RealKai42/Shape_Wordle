@@ -3,7 +3,8 @@
  */
 const { createCanvas, createImageData } = require('canvas')
 const { ColorInterpolator } = require("color-extensions");
-const fs = require('fs')
+const fs = require('fs');
+const { COLOR_XYZ2BGR } = require('opencv4nodejs');
 
 const colours = ['#0081b4', '#e5352b', '#e990ab', '#ffd616', '#96cbb3', '#91be3e', '#39a6dd', '#eb0973', '#dde2e0', '#949483', '#f47b7b',
   '#9f1f5c', '#ef9020', '#00af3e', '#85b7e2', '#29245c', '#00af3e', '#ffffff'];
@@ -36,7 +37,7 @@ function groupVis(groupData, options, outputDir) {
   fs.writeFileSync(`${outputDir}/${prefix}groupVis.png`, buf);
 }
 
-function distanceVis(distData, options, outputDir) {
+function distanceVis(distData, options, outputDir, outputImage = true) {
   // 获取最大最小值
   let max = -Infinity
   let min = Infinity
@@ -72,9 +73,11 @@ function distanceVis(distData, options, outputDir) {
     }
   }
 
-  ctx.putImageData(imgData, 0, 0)
-  const buf = canvas.toBuffer();
-  fs.writeFileSync(`${outputDir}/${prefix}distanceVis.png`, buf);
+  if (outputImage) {
+    ctx.putImageData(imgData, 0, 0)
+    const buf = canvas.toBuffer();
+    fs.writeFileSync(`${outputDir}/${prefix}distanceVis.png`, buf);
+  }
   return imgData
 }
 
@@ -135,8 +138,8 @@ function extremePointVis(distData, regions, options, outputDir, drawText = true,
   return ImageData
 }
 
-function allocateWordsVis(distData, regions, keywords, options, outputDir) {
-  let epImageData = distanceVis(distData, options, outputDir)
+function allocateWordsVis(distData, regions, keywords, options, outputDir, outputInfo = true) {
+  let epImageData = distanceVis(distData, options, outputDir, false)
   const canvas = createCanvas(options.width, options.height)
   const ctx = canvas.getContext('2d')
   ctx.putImageData(epImageData, 0, 0)
@@ -164,6 +167,7 @@ function allocateWordsVis(distData, regions, keywords, options, outputDir) {
   let buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_Numbers.png`, buf)
 
+  console.log(keywords.map(word => [word.name, word.weight]))
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.putImageData(epImageData, 0, 0)
   regions.forEach((region, regionID) => {
@@ -177,7 +181,8 @@ function allocateWordsVis(distData, regions, keywords, options, outputDir) {
           info += `${word.name},${word.weight}\n`
         }
       })
-      console.log(`regionID:${regionID} epID${epID} words: ${info.replace(/\n/g, '  ')}`)
+      if (outputInfo)
+        console.log(`regionID:${regionID} epID${epID} words: ${info.replace(/\n/g, '  ')}`)
       const width = ctx.measureText(info).actualBoundingBoxRight
       ctx.fillText(info, point.pos[0] - width, point.pos[1])
     })
@@ -190,8 +195,157 @@ function allocateWordsVis(distData, regions, keywords, options, outputDir) {
   fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_words.png`, buf)
 }
 
+function spiralVis(dist, regions, options, outputDir) {
+  const { iterate } = require('./spiral')
+  const { width, height } = options
 
-var hexToRgb = function (hex) {
+  let epImageData = distanceVis(dist, options, ' ', false)
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext('2d')
+  ctx.putImageData(epImageData, 0, 0)
+
+  regions.forEach(region => {
+    const { extremePoints, dist: regionDist } = region
+    extremePoints.forEach(extremePoint => {
+      const centerPoint = extremePoint.pos
+
+      ctx.beginPath()
+      ctx.arc(centerPoint[0], centerPoint[1], 3, 0, 360)
+      ctx.fillStyle = 'yellow'
+      ctx.fill()
+      ctx.closePath()
+
+      let point = [centerPoint[0] + 1, centerPoint[1] + 1]
+
+      for (let i = 0; i < 20000; i++) {
+        point = iterate(regionDist, centerPoint, point, width, height)
+        if (!point) {
+          break
+        }
+        drawPoint(ctx, point[0], point[1])
+      }
+    })
+  })
+
+  buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}SpiralVis.png`, buf)
+}
+
+function drawWord(word, options) {
+  // 用于可视化调试构建单词盒子时的效果
+  const canvas = createCanvas(500, 500)
+  const ctx = canvas.getContext('2d')
+  const { fontWeight } = options
+  const { name, color, fontFamily, angle, fontSize, width, height, descent, box: boxes } = word
+  // 绘制文字
+  ctx.save()
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+  ctx.fillStyle = color
+  ctx.translate(200, 200)
+  ctx.rotate(angle)
+  ctx.textAlign = 'start'
+  ctx.textBaseline = 'alphabetic'
+  ctx.fillText(name, 0, 0)
+
+  // 绘制box
+  ctx.globalAlpha = 0.7
+  for (let i = 0; i < boxes.length; i++) {
+    const box = boxes[i]
+    ctx.fillStyle = i === 0 ? 'red' : 'green'
+    const width = box[2], height = box[3]
+    const x = box[0], y = box[1] - height
+    ctx.fillRect(x, y, width, height)
+  }
+  ctx.restore()
+  outputCanvas(canvas, "word")
+}
+
+
+function debugDraw(keywords, options, canvasInput = null) {
+  let canvas, ctx
+
+  if (!canvasInput) {
+    let epImageData = distanceVis(options.dist, options, ' ', false)
+    canvas = createCanvas(options.width, options.height)
+    ctx = canvas.getContext('2d')
+    ctx.putImageData(epImageData, 0, 0)
+  } else {
+    canvas = canvasInput
+    ctx = canvas.getContext('2d')
+  }
+
+
+  const drawBox = false
+
+  keywords.forEach(word => {
+    if (word.position) {
+      const { fontWeight } = options
+      const { name, color, position, fontFamily, angle, fontSize, width, height, descent, box: boxes } = word
+      // 绘制文字
+      ctx.save()
+      ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+      // ctx.fillStyle = color
+      ctx.fillStyle = word.state ? 'black' : 'red'
+      ctx.translate(position[0], position[1])
+      ctx.rotate(angle)
+      ctx.textAlign = 'start'
+      ctx.textBaseline = 'alphabetic'
+      ctx.fillText(name, 0, 0)
+
+      if (drawBox) {
+        // 绘制box
+        ctx.globalAlpha = 0.7
+        for (let i = 0; i < boxes.length; i++) {
+          const box = boxes[i]
+          ctx.fillStyle = i === 0 ? 'red' : 'green'
+          const width = box[2], height = box[3]
+          const x = box[0], y = box[1] - height
+          ctx.fillRect(x, y, width, height)
+        }
+      }
+      ctx.restore()
+    }
+  })
+  outputCanvas(canvas, 'canvas')
+}
+
+function textInfoVis(wordPixels) {
+  const canvas = createCanvas(100, 100)
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = '#000000'
+  const x = 20, y = 80
+
+  for (let pix of wordPixels) {
+    ctx.fillRect(x + pix[0], y + pix[1], 1, 1)
+  }
+  outputCanvas(canvas, 'textInfo')
+}
+
+function outputCanvas(canvas, filename) {
+  filename = filename ? `${filename} ${Date.now()}` : `${Date.now()}`
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`canvas/${filename}.png`, buf)
+}
+
+function gridVis(grid) {
+  let width = grid.length
+  let height = grid[0].length
+  let canvas = createCanvas(width, height)
+  let ctx = canvas.getContext('2d')
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      if (grid[x][y]) {
+        ctx.fillStyle = 'green'
+        ctx.fillRect(x, y, 1, 1)
+      }
+    }
+  }
+  outputCanvas(canvas, 'grid')
+}
+
+
+function hexToRgb(hex) {
   var rgb = [];
   hex = hex.substr(1); //去除前缀 # 号
   if (hex.length === 3) {
@@ -205,10 +359,21 @@ var hexToRgb = function (hex) {
   return rgb;
 };
 
+function drawPoint(ctx, x, y) {
+  ctx.fillStyle = 'black'
+  ctx.fillRect(x, y, 1, 1);
+}
+
 module.exports = {
   groupVis,
   distanceVis,
   contourVis,
   extremePointVis,
   allocateWordsVis,
+  outputCanvas,
+  drawWord,
+  debugDraw,
+  spiralVis,
+  gridVis,
+  textInfoVis,
 }

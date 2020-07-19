@@ -7,7 +7,7 @@
  */
 
 const cv = require('opencv4nodejs')
-const { Contour } = require('opencv4nodejs')
+const { Vec } = require('opencv4nodejs')
 
 function preProcessImg(image, options) {
   const cuttedImage = cutImage(image, options)
@@ -36,7 +36,7 @@ function getGroup(image, options) {
   let markersData = markers.getDataAsArray()
   // 为所有的标记加1，保证背景是0而不是1
   markersData = markersData.map(item => {
-    return newItem = item.map(i => i + 1)
+    return item.map(i => i + 1)
   })
   // 让所有的未知区域为0
   const unknownData = unknown.getDataAsArray()
@@ -53,7 +53,7 @@ function getGroup(image, options) {
   markersData = markers.getDataAsArray()
   // 对背景区域由-1转换成1
   markersData = markersData.map(item => {
-    return newItem = item.map(i => i === -1 ? 1 : i)
+    return item.map(i => i === -1 ? 1 : i)
   })
   return markersData
 }
@@ -107,13 +107,12 @@ function cutImage(image, options) {
   if (image.channels === 4) {
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
-        if (gray.at(row, col).w === 0) {
-          gray.set(row, col, new Vec(255, 255, 255, 1));
+        if (image.at(row, col).w === 0) {
+          image.set(row, col, new Vec(255, 255, 255, 1));
           // image.set(row, col, new Vec(0, 0, 0, 1))
         }
       }
     }
-    gray = gray.cvtColor(cv.COLOR_BGRA2BGR)
   }
   gray = image.cvtColor(cv.COLOR_BGR2GRAY)
   // 切割原图
@@ -204,8 +203,8 @@ function getMaxValue(arr) {
   // var newArray = arr.join(",").split(",");
   // return Math.max.apply({}, newArray);
   let max = -Infinity
-  for (let i in arr) {
-    for (let j in i) {
+  for (let i of arr) {
+    for (let j of i) {
       max = j > max ? j : max
     }
   }

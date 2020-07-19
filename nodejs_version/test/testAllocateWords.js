@@ -8,7 +8,7 @@ const { allocateWords } = require('../lib/allocateWords')
 const { allocateWordsVis } = require('../lib/visTools')
 
 const dir = 'input/'
-const text_filename = dir + 'complex_text_en.txt'
+const text_filename = dir + 'demo_text_en.txt'
 const image_filename = dir + 'input.png'
 const image = cv.imread(image_filename);
 const text = fs.readFileSync(text_filename, 'utf-8')

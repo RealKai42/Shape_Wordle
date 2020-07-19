@@ -17,7 +17,7 @@ const defaultOptions = {
   minFontSize: 2,
 
   keywordColor: '#000000',
-  fillingWordColor: '#000000',
+  fillingWordColor: '#ff0000',
   fillingFontSize: 10,
   cnFontFamily: 'siyuan',
   enFontFamily: 'Arial',
@@ -47,7 +47,7 @@ const defaultOptions = {
 
 
   // 调试参数
-  debug: true,
+  debug: false,
 }
 
 module.exports = {
