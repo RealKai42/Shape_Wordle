@@ -6,6 +6,9 @@ const { createCanvas } = require('canvas')
 const { outputCanvas, gridVis, textInfoVis } = require('./visTools')
 const { measureTextSize, roundFun } = require('./utils')
 
+const debugCanvas = createCanvas(900, 600)
+const debugCtx = debugCanvas.getContext('2d')
+
 function drawFillingWords(keywords, fillingWords, group, options) {
   const {
     width: canvasWidth,
@@ -79,11 +82,10 @@ function drawFillingWords(keywords, fillingWords, group, options) {
     putWord(word, fontSize, 0.8, grid, wordLayouts, gridSettings)
   })
 
-  // console.log(wordLayouts)
-
-  // console.log(fontSize)
-
+  // putWord(fillingWords[0], fontSize, 0.8, grid, wordLayouts, gridSettings)
+  // outputCanvas(debugCanvas, 'debug')
   // gridVis(grid)
+
   return wordLayouts
 }
 
@@ -108,8 +110,8 @@ function putWord(word, fontSize, alpha, grid, wordLayouts, gridSettings) {
     const nudge = getSpiralPoint(i, max)
     center[0] += nudge[0] / 2
     center[1] += nudge[1] / 2
-    center = [Math.round(center[0]), Math.round(~~center[1])]
-    // ctx.fillRect(center[0], center[1], 1, 1)
+    center = [Math.round(center[0]), Math.round(center[1])]
+    // debugCtx.fillRect(center[0], center[1], 1, 1)
 
     if (canPutWordAtPoint(grid, wordPixels, center[0], center[1])) {
       // 能放置则返回单词构建信息
@@ -119,7 +121,7 @@ function putWord(word, fontSize, alpha, grid, wordLayouts, gridSettings) {
     }
   }
 
-  // outputCanvas(canvas)
+  // outputCanvas(debugCanvas)
   return false
 
 
