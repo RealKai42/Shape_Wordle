@@ -153,3 +153,4 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 
 img_process/__pycache__
+canvas/
