@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "tsc && node ./build/index.js",
+    "dev": "tsc && concurrently npm:dev:*"
   },
   "repository": {
     "type": "git",
@@ -16,12 +19,80 @@
     "url": "https://github.com/Kaiyiwing/Shape_Wordle/issues"
   },
   "homepage": "https://github.com/Kaiyiwing/Shape_Wordle#readme",
-  "devDependencies": {
+  "prettier": {
+    "endOfLine": "lf",
+    "semi": false,
+    "singleQuote": false,
+    "tabWidth": 2,
+    "printWidth": 100,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "extends": [
+      "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "overrides": [
+      {
+        "files": [
+          "src/**/*.ts",
+          "src/**/*.tsx"
+        ],
+        "env": {
+          "node": false,
+          "browser": true
+        },
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "extends": [
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended",
+          "plugin:prettier/recommended",
+          "plugin:react/recommended",
+          "plugin:react-hooks/recommended"
+        ],
+        "parserOptions": {
+          "ecmaVersion": 2020,
+          "sourceType": "module"
+        },
+        "settings": {
+          "react": {
+            "version": "detect"
+          }
+        }
+      }
+    ]
+  },
+  "dependencies": {
     "canvas": "^2.6.1",
     "color-extensions": "^1.2.0",
     "lemmatizer": "0.0.1",
     "natural": "^2.1.5",
     "nodejieba": "^2.4.1",
     "opencv4nodejs": "^5.6.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.8",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "jest": "^26.2.2",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "prettier-eslint-cli": "^5.0.0",
+    "ts-jest": "^26.1.4",
+    "typescript": "^3.9.7"
   }
 }

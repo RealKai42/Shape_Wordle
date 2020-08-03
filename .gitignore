@@ -154,3 +154,4 @@ dist
 
 img_process/__pycache__
 canvas/
+output/
