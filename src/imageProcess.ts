@@ -1,12 +1,10 @@
 import cv, { imshow, Vec4 } from "opencv4nodejs"
 import { Options } from "./defaults"
-import { twoDimenArray, Timer } from "./helper"
-import { groupVis } from "./visTools"
 
 export function preProcessImg(image: cv.Mat, options: Options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage)
-  const [distData, contourData, areaData] = getGroupInfo(groupData, options)
+  const { distData, contourData, areaData } = getGroupInfo(groupData, options)
   return { dist: distData, contour: contourData, group: groupData, area: areaData }
 }
 
@@ -44,8 +42,8 @@ function getGroupInfo(markers: number[][], options: Options) {
     const distImg = newImage.distanceTransform(cv.DIST_L2, cv.DIST_MASK_3)
     distData.push([])
     const distData_i = label - 1
-    for (let y = 0; y < width; y++) {
-      for (let x = 0; x < height; x++) {
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
         if (distImg.at(y, x) !== 0) {
           distData[distData_i].push([x, y, distImg.at(y, x)])
         }
@@ -64,7 +62,7 @@ function getGroupInfo(markers: number[][], options: Options) {
     }
     areaData.push(area)
   })
-  return [distData, contourData, areaData]
+  return { distData, contourData, areaData }
 }
 
 /**
