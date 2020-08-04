@@ -3,10 +3,11 @@ import { Options } from "./defaults"
 import { twoDimenArray, Timer } from "./helper"
 import { groupVis } from "./visTools"
 
-export function preProcessImg(image: cv.Mat, options: Options): void {
+export function preProcessImg(image: cv.Mat, options: Options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage)
-  groupVis(groupData, options, "test")
+  const [distData, contourData, areaData] = getGroupInfo(groupData, options)
+  return { dist: distData, contour: contourData, group: groupData, area: areaData }
 }
 
 /**
@@ -19,6 +20,51 @@ function getGroup(image: cv.Mat) {
   const thresh = gray.threshold(0, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
   const components = thresh.connectedComponents()
   return components.getDataAsArray()
+}
+
+/**
+ * 获取每个分组的Distance Field、Contour、Area等信息
+ * @param group
+ */
+function getGroupInfo(markers: number[][], options: Options) {
+  const { width, height } = options
+  // 获取所有分组，去除背景0
+  const labels = unique(markers.flat()).splice(1)
+  const distData: number[][][] = []
+  const contourData: number[][][] = []
+  const areaData: number[] = []
+
+  labels.forEach(label => {
+    // 复制一个新markers, 非该次处理的分组设置为0，该次处理的设置为1
+    const newMarkers = markers.map(item => {
+      return item.map(i => (i === label ? 1 : 0))
+    })
+    // 获取distance field
+    const newImage = new cv.Mat(newMarkers, cv.CV_8UC1)
+    const distImg = newImage.distanceTransform(cv.DIST_L2, cv.DIST_MASK_3)
+    distData.push([])
+    const distData_i = label - 1
+    for (let y = 0; y < width; y++) {
+      for (let x = 0; x < height; x++) {
+        if (distImg.at(y, x) !== 0) {
+          distData[distData_i].push([x, y, distImg.at(y, x)])
+        }
+      }
+    }
+    // 获取contour
+    const contour = newImage.findContours(cv.RETR_TREE, cv.CHAIN_APPROX_TC89_KCOS)
+    // 处理contour数据
+    contourData.push([])
+    let area = 0
+    for (let i in contour) {
+      area += Math.floor(contour[i].area)
+      for (let j of contour[i].getPoints()) {
+        contourData[distData_i].push([j.x, j.y])
+      }
+    }
+    areaData.push(area)
+  })
+  return [distData, contourData, areaData]
 }
 
 /**
@@ -97,4 +143,8 @@ function cutImage(image: cv.Mat, options: Options): cv.Mat {
   const startCol = Math.floor((canvasWidth - width) / 2)
   image.copyTo(newImage.getRegion(new cv.Rect(startCol, startRow, width, height)))
   return newImage
+}
+
+function unique(arr: number[]) {
+  return Array.from(new Set(arr))
 }
