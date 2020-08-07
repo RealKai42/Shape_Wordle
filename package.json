@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && node ./build/test/index.js",
+    "test": "rimraf ./build && tsc && node ./build/test/index.js",
     "build": "tsc",
-    "start": "tsc && node ./build/index.js"
+    "start": "rimraf ./build && tsc && node ./build/index.js"
   },
   "repository": {
     "type": "git",
