@@ -8,7 +8,7 @@ import path from "path"
 import { processImageData, processDistanceField } from "../processDistanceField"
 
 const dir = path.resolve(__dirname, "../../assets/")
-const image = cv.imread(path.resolve(dir, "input1.png"))
+const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
 const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
 
 testImageProcess(image)
