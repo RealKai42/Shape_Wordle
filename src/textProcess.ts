@@ -6,9 +6,9 @@ import { Options } from "./defaults"
 export interface WordCounter {
   [key: string]: number
 }
-export interface WordCount {
+export interface Word {
   name: string
-  count: number
+  weight: number
 }
 
 export function splitText(text: string, options: Options) {
@@ -60,16 +60,16 @@ export function splitText(text: string, options: Options) {
     return counter
   }, {} as WordCounter)
 
-  let wordCounts: WordCount[] = []
+  let wordCounts: Word[] = []
   for (let key of Object.keys(counter)) {
-    wordCounts.push({ name: key, count: counter[key] })
+    wordCounts.push({ name: key, weight: counter[key] })
   }
-  wordCounts.sort((a, b) => b.count - a.count)
+  wordCounts.sort((a, b) => b.weight - a.weight)
 
   // 处理所有单词权重为 count/max_count
-  const max_count = wordCounts[0].count
+  const max_count = wordCounts[0].weight
   for (let word of wordCounts) {
-    word.count = word.count / max_count
+    word.weight = word.weight / max_count
   }
   return wordCounts
 }

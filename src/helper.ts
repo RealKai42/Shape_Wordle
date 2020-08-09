@@ -70,3 +70,7 @@ export class Timer {
 export function roundFun(value: number, n: number) {
   return Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
 }
+
+export function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min)) + min
+}
