@@ -1,9 +1,10 @@
-import { createCanvas, createImageData } from "canvas"
+import { createCanvas, createImageData, Canvas } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
 import { Options } from "./defaults"
 import { twoDimenArray } from "./helper"
 import { region } from "./processDistanceField"
+import { keyword } from "./processWords"
 
 const prefix = "VisTool_"
 
@@ -151,6 +152,74 @@ export function extremePointVis(
   const buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}extremePointVis.png`, buf)
   return ImageData
+}
+
+export function allocateWordsVis(
+  distData: twoDimenArray[],
+  regions: region[],
+  keywords: keyword[],
+  options: Options,
+  outputDir: string,
+  outputInfo = true
+) {
+  let epImageData = distanceVis(distData, options, outputDir, false)
+
+  const canvas = createCanvas(options.width, options.height)
+  const ctx = canvas.getContext("2d")
+  ctx.putImageData(epImageData, 0, 0)
+  regions.forEach((region) => {
+    const points = region.extremePoints
+    points.forEach((point) => {
+      ctx.beginPath()
+      ctx.arc(point.pos[0], point.pos[1], 3, 0, 360)
+      ctx.fillStyle = "yellow"
+      ctx.fill()
+      ctx.closePath()
+    })
+  })
+  epImageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  regions.forEach((region) => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      ctx.font = "15px Arial"
+      ctx.fillStyle = "black"
+      let info = `value: ${point.value}\nnumber:${point.epNumber}\nregionID:${point.regionID}\nepID:${epID}`
+      const width = ctx.measureText(info).actualBoundingBoxRight
+      ctx.fillText(info, point.pos[0] - width, point.pos[1])
+    })
+  })
+  let buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_Numbers.png`, buf)
+
+  // console.log(keywords.map((word) => [word.name, word.weight]))
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.putImageData(epImageData, 0, 0)
+  regions.forEach((region, regionID) => {
+    const points = region.extremePoints
+    points.forEach((point, epID) => {
+      ctx.font = "10px Arial"
+      ctx.fillStyle = "black"
+      let info = ""
+      keywords.forEach((word) => {
+        if (word.regionID === regionID && word.epID === epID) {
+          info += `${word.name},${word.weight}\n`
+        }
+      })
+      if (outputInfo)
+        console.log(`regionID:${regionID} epID${epID} words: ${info.replace(/\n/g, "  ")}`)
+      const width = ctx.measureText(info).actualBoundingBoxRight
+      ctx.fillText(info, point.pos[0] - width, point.pos[1])
+    })
+  })
+
+  buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_words.png`, buf)
+}
+
+export function outputCanvas(canvas: Canvas, filename: string = "") {
+  filename = `${filename} ${Date.now()}`
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`canvas/${filename}.png`, buf)
 }
 
 function hexToRgb(hex: string) {

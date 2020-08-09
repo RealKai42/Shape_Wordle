@@ -2,15 +2,17 @@ import { roundFun, randomInt } from "./helper"
 import { Word } from "./textProcess"
 import { Options } from "./defaults"
 
-interface keyword {
+export interface keyword {
   name: string
   weight: number
   color: string
   fontFamily: string
   angle?: number
+  regionID?: number
+  epID?: number
 }
 
-interface fillingword {
+export interface fillingword {
   name: string
   weight: number
   color: string

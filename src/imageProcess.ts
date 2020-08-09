@@ -5,7 +5,7 @@ export function preProcessImg(image: cv.Mat, options: Options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage)
   const { distData, contourData, areaData } = getGroupInfo(groupData, options)
-  return { dist: distData, contours: contourData, group: groupData, area: areaData }
+  return { dist: distData, contours: contourData, group: groupData, areas: areaData }
 }
 
 /**

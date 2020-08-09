@@ -6,12 +6,18 @@ interface extremePoint {
   value: number
   regionID: number
   ratio?: number
+  epWeight?: number
+  epNumber?: number
 }
 
 export interface region {
   contour: number[][]
   dist: twoDimenArray[]
   extremePoints: extremePoint[]
+  value: number
+  area: number
+  wordsNum?: number
+  wordsWeight?: number
 }
 
 export function processImageData(dist: number[][][], group: number[][], options: Options) {
@@ -29,7 +35,11 @@ export function processImageData(dist: number[][][], group: number[][], options:
   return { dist: newDist, group: newGroup }
 }
 
-export function processDistanceField(dist: twoDimenArray[], contours: number[][][]) {
+export function processDistanceField(
+  dist: twoDimenArray[],
+  contours: number[][][],
+  areas: number[]
+) {
   const regions = dist.map((region, regionID) => {
     smoothDistanceField(region)
     smoothDistanceField(region)
@@ -109,6 +119,8 @@ export function processDistanceField(dist: twoDimenArray[], contours: number[][]
       e.value = roundFun(e.value, 2)
     })
     region.extremePoints = extremePoint
+    region.value = extremePoint[0].value
+    region.area = areas[regionID]
   })
 
   return regions
