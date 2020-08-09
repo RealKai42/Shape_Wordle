@@ -1,20 +1,23 @@
 import { preProcessImg } from "../imageProcess"
-import { groupVis, distanceVis, contourVis } from "../visTools"
-import { defaultOptions } from "../defaults"
+import { groupVis, distanceVis, contourVis, extremePointVis } from "../visTools"
+import { defaultOptions, Options } from "../defaults"
 import { splitText } from "../textProcess"
 import cv from "opencv4nodejs"
 import fs from "fs"
 import path from "path"
+import { processImageData, processDistanceField } from "../processDistanceField"
 
 const dir = path.resolve(__dirname, "../../assets/")
 const image = cv.imread(path.resolve(dir, "input1.png"))
-const text = fs.readFileSync(path.resolve(dir, "complex_text_en.txt"), "utf-8")
+const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
 
-// testImageProcess(image)·
+testImageProcess(image)
 testTextProcess(text)
 
 function testImageProcess(image: cv.Mat) {
-  const { dist, contour, group } = preProcessImg(image, defaultOptions)
+  const { dist: distRaw, contours, group: groupRaw } = preProcessImg(image, defaultOptions)
+  const { dist, group } = processImageData(distRaw, groupRaw, defaultOptions)
+  const regions = processDistanceField(dist, contours)
   const outputDir = path.resolve(__dirname, "imageProcess")
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir)
@@ -22,12 +25,17 @@ function testImageProcess(image: cv.Mat) {
 
   distanceVis(dist, defaultOptions, outputDir)
   groupVis(group, defaultOptions, outputDir)
-  contourVis(contour, defaultOptions, outputDir)
+  contourVis(contours, defaultOptions, outputDir)
+  console.log(`------------------------------------------------------`)
+  console.log("regions 信息")
+  extremePointVis(dist, regions, defaultOptions, outputDir)
 }
 
 function testTextProcess(text: string) {
   const result = splitText(text, defaultOptions)
-  console.log("length", result.length)
-  // Array.prototype.forEach.call(result.slice(10), (x) => console.log(x))
-  console.log(result.slice(10))
+  console.log(`------------------------------------------------------`)
+  console.log("单词数量", result.length)
+  for (let i = 0; i < 10; i++) {
+    console.log(result[i])
+  }
 }

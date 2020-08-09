@@ -26,7 +26,6 @@ export const defaultOptions: Options = {
   resizeFactor: 4,
 
   colors: [
-    "#000000",
     "#e5352b",
     "#e990ab",
     "#ffd616",

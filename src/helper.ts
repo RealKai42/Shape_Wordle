@@ -1,12 +1,18 @@
 export class twoDimenArray {
-  private array: Int8Array
+  private array: Float32Array | Int8Array
   private width: number
   private height: number
 
-  constructor(width: number, height: number, fillValue: number = 0) {
+  constructor(width: number, height: number, type: string = "int", fillValue: number = 0) {
     this.width = width
     this.height = height
-    this.array = new Int8Array(width * height)
+
+    if (type === "int") {
+      this.array = new Int8Array(width * height)
+    } else {
+      this.array = new Float32Array(width * height)
+    }
+
     if (fillValue !== 0) {
       this.array.fill(fillValue)
     }
@@ -18,6 +24,10 @@ export class twoDimenArray {
 
   set(x: number, y: number, value: number): void {
     this.array[y * this.width + x] = value
+  }
+
+  getShape() {
+    return [this.width, this.height]
   }
 
   fromArray(array: number[][]) {
@@ -40,6 +50,10 @@ export class twoDimenArray {
   }
 }
 
+export function calcDistance(p1: number[], p2: number[]) {
+  return Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]))
+}
+
 export class Timer {
   private last: number
   constructor() {
@@ -50,4 +64,9 @@ export class Timer {
     console.log(`${msg}: ${Date.now() - this.last}`)
     this.last = Date.now()
   }
+}
+
+//保留n位小数
+export function roundFun(value: number, n: number) {
+  return Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
 }

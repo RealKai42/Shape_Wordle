@@ -5,7 +5,7 @@ export function preProcessImg(image: cv.Mat, options: Options) {
   const cuttedImage = cutImage(image, options)
   const groupData = getGroup(cuttedImage)
   const { distData, contourData, areaData } = getGroupInfo(groupData, options)
-  return { dist: distData, contour: contourData, group: groupData, area: areaData }
+  return { dist: distData, contours: contourData, group: groupData, area: areaData }
 }
 
 /**
@@ -32,10 +32,10 @@ function getGroupInfo(markers: number[][], options: Options) {
   const contourData: number[][][] = []
   const areaData: number[] = []
 
-  labels.forEach(label => {
+  labels.forEach((label) => {
     // 复制一个新markers, 非该次处理的分组设置为0，该次处理的设置为1
-    const newMarkers = markers.map(item => {
-      return item.map(i => (i === label ? 1 : 0))
+    const newMarkers = markers.map((item) => {
+      return item.map((i) => (i === label ? 1 : 0))
     })
     // 获取distance field
     const newImage = new cv.Mat(newMarkers, cv.CV_8UC1)
