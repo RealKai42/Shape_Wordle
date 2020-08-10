@@ -2,6 +2,7 @@ import { lemmatizer } from "lemmatizer"
 import { WordTokenizer, stopwords } from "natural"
 import nodejieba from "nodejieba"
 import { Options, WordCounter, Word } from "./interface"
+import path from "path"
 
 export function splitText(text: string, options: Options) {
   const chinesePattern = new RegExp("[\u4E00-\u9FA5]+") // 监测到任意中文则返回true
@@ -12,7 +13,9 @@ export function splitText(text: string, options: Options) {
     options.language = "cn"
     const tokens = nodejieba.cutAll(text.replace(/\n/g, ""))
     const fs = require("fs")
-    const stopwordsCN = fs.readFileSync(__dirname + "/stopword_zh.txt", "utf8").split("\n")
+    const stopwordsCN = fs
+      .readFileSync(path.resolve(__dirname, "../assets/", "demo_text_ch.txt"), "utf8")
+      .split("\n")
     tokens.forEach((word) => {
       if (
         word.length < 2 ||

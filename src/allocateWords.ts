@@ -151,7 +151,7 @@ function allocateWordsToExtremePoint(
       words.forEach((word) => {
         if (word.regionID === regionID) {
           const fontSize = (maxFontSize - minFontSize) * Math.sqrt(word.weight) + minFontSize
-          const { width } = measureTextSize(word.name, fontSize, word.fontFamily)
+          const { width } = measureTextSize(word.name, fontSize, word.fontWeight, word.fontFamily)
           area += (fontSize + 1) * (width + 4)
         }
       })

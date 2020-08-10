@@ -52,20 +52,26 @@ export class twoDimenArray {
   }
 }
 
-export function measureTextSize(text: string, fontSize: number, fontName: string, out = false) {
+export function measureTextSize(
+  text: string,
+  fontSize: number,
+  fontWeight: string | number,
+  fontFamily: string,
+  out = false
+) {
   const canvasWidth = 400,
     canvasHeight = 400
   const canvas = createCanvas(canvasWidth, canvasHeight)
   const ctx = canvas.getContext("2d")
 
   ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-  ctx.font = `${fontSize}px ${fontName}`
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
   ctx.textAlign = "start"
   ctx.textBaseline = "alphabetic"
   ctx.fillStyle = "#000000"
   const fillX = 200,
     fillY = 200
-  ctx.fillText(text, 200, 200)
+  ctx.fillText(text, fillX, fillY)
 
   const size = ctx.measureText(text)
   const width = size.width
@@ -98,16 +104,9 @@ export function measureTextSize(text: string, fontSize: number, fontName: string
     }
   }
   const height = last - first
-  const ascent = fillY - last
+  // todo: ascent的计算好像有bug，目前不影响结果，暂时搁置
+  const ascent = last - fillY
   const descent = last - fillY
-  if (out) {
-    // console.log(text, first, last, ascent, descent)
-    drawLine(ctx, 0, first, 400, first)
-    drawLine(ctx, 0, last, 400, last)
-    drawLine(ctx, 0, fillY, 400, fillY)
-    outputCanvas(canvas)
-  }
-
   return { width, height, ascent, descent }
 }
 

@@ -1,5 +1,4 @@
 import { twoDimenArray, calDistance } from "./helper"
-const eps = 0.0000001
 /**
  * 根据螺旋线迭代取得一个位置
  * @param dist

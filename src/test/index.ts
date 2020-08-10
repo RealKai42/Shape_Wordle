@@ -15,10 +15,14 @@ import path from "path"
 import { processImageData, processDistanceField } from "../processDistanceField"
 import { processWords } from "../processWords"
 import { allocateWords } from "../allocateWords"
+import { generateWordle } from "../wordle"
+import { keyword } from "../interface"
+import { wordsBoxVis } from "../visTools"
 
 const dir = path.resolve(__dirname, "../../assets/")
 const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
 const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
+// const text = fs.readFileSync(path.resolve(dir, "demo_text_ch.txt"), "utf-8")
 const options = defaultOptions
 const outputDir = path.resolve(__dirname, "imageProcess")
 if (!fs.existsSync(outputDir)) {
@@ -32,26 +36,36 @@ const { dist: distRaw, contours, group: groupRaw, areas } = preProcessImg(image,
 const { dist, group } = processImageData(distRaw, groupRaw, defaultOptions)
 const regions = processDistanceField(dist, contours, areas)
 allocateWords(keywords, regions, areas, options)
+generateWordle(keywords, regions, group, options)
 
 // 展示文本预处理
-console.log(`------------------------------------------------------`)
-console.log("单词数量", words.length)
-for (let i = 0; i < 10; i++) {
-  console.log(words[i])
-}
+// console.log(`------------------------------------------------------`)
+// console.log("单词数量", words.length)
+// for (let i = 0; i < 10; i++) {
+//   console.log(words[i])
+// }
 // 可视化 distance field
-distanceVis(dist, options, outputDir)
+// distanceVis(dist, options, outputDir)
+
 // 可视化分组信息
-groupVis(group, options, outputDir)
+// groupVis(group, options, outputDir)
+
 // 可视化轮廓识别信息
-contourVis(contours, options, outputDir)
+// contourVis(contours, options, outputDir)
+
 // 可视化极点提取信息
-console.log(`------------------------------------------------------`)
-console.log("regions 信息")
-extremePointVis(dist, regions, options, outputDir)
+// console.log(`------------------------------------------------------`)
+// console.log("regions 信息")
+// extremePointVis(dist, regions, options, outputDir)
+
 // 可视化单词分配到region和极点结果
-console.log(`------------------------------------------------------`)
-console.log("keywords 分配信息")
-allocateWordsVis(dist, regions, keywords, options, outputDir)
+// console.log(`------------------------------------------------------`)
+// console.log("keywords 分配信息")
+// allocateWordsVis(dist, regions, keywords, options, outputDir)
+
 // 可视化螺旋线生成效果
-spiralVis(dist, regions, options, outputDir)
+// spiralVis(dist, regions, options, outputDir)
+
+// 可视化单词box构建，需构建单词box后调用
+// console.log(keywords)
+wordsBoxVis(keywords, outputDir)

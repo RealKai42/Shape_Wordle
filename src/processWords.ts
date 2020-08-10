@@ -20,6 +20,7 @@ function separateWords(words: Word[], options: Options) {
     language,
     cnFontFamily,
     enFontFamily,
+    fontWeight,
   } = options
   const fontFamily = language === "cn" ? cnFontFamily : enFontFamily
   options.fontFamily = fontFamily
@@ -34,6 +35,7 @@ function separateWords(words: Word[], options: Options) {
     weight: weight < 0.02 ? 0.02 : roundFun(weight, 3),
     color: keywordColor,
     fontFamily,
+    fontWeight,
   }))
 
   const start = words.length >= 160 ? keywordsNum : 0

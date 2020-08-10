@@ -1,10 +1,9 @@
 import { createCanvas, createImageData, Canvas } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
-import { Options } from "./interface"
+import { Options, keyword } from "./interface"
 import { twoDimenArray } from "./helper"
 import { region } from "./interface"
-import { keyword } from "./interface"
 import { iterate } from "./spiral"
 
 const prefix = "VisTool_"
@@ -223,7 +222,6 @@ export function spiralVis(
   options: Options,
   outputDir: string
 ) {
-  const { iterate } = require("./spiral")
   const { width, height } = options
 
   let epImageData = distanceVis(dist, options, "", false)
@@ -242,21 +240,83 @@ export function spiralVis(
       ctx.fill()
       ctx.closePath()
 
-      let point = [centerPoint[0] + 1, centerPoint[1] + 1]
+      let point: number[] | false = [centerPoint[0] + 1, centerPoint[1] + 1]
       for (let i = 0; i < 20000; i++) {
         point = iterate(regionDist, centerPoint, point, width, height)
-        // console.log(point)
         if (!point) {
           break
         }
         drawPoint(ctx, point[0], point[1])
-        // break
       }
     })
   })
 
   const buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}SpiralVis.png`, buf)
+}
+
+export function wordsBoxVis(keywords: keyword[], outputDir: string) {
+  const col = 4,
+    wordWidth = 200,
+    wordHeight = 200
+  const length = keywords.length
+  const canvasWidth = wordWidth * col,
+    canvasHeight = (length / 4 + 1) * wordHeight
+  const canvas = createCanvas(canvasWidth, canvasHeight)
+  const ctx = canvas.getContext("2d")
+
+  let startX = 0,
+    startY = wordHeight
+  keywords.forEach((word, wordID) => {
+    const {
+      name,
+      color,
+      angle,
+      fontFamily,
+      fontWeight,
+      fontSize,
+      ascent,
+      descent,
+      box: boxes,
+    } = word
+
+    const x = startX + wordWidth / 2,
+      y = startY + wordHeight / 2
+
+    // 绘制文字
+    ctx.save()
+    ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+    ctx.fillStyle = color
+    ctx.translate(x, y)
+    ctx.rotate(angle!)
+    ctx.textAlign = "start"
+    ctx.textBaseline = "alphabetic"
+    ctx.fillText(name, 0, 0)
+
+    // 绘制box
+    ctx.globalAlpha = 0.7
+    // console.log(wordID, name, word.weight, boxes?.length)
+    for (let i = 0; i < boxes!.length; i++) {
+      const box = boxes![i]
+      ctx.fillStyle = i === 0 ? "red" : "green"
+      const width = box[2],
+        height = box[3]
+      const x = box[0],
+        y = box[1] - height
+      ctx.fillRect(x, y, width, height)
+    }
+
+    // 绘制ascent和descent线
+    // console.log(ascent, descent)
+    // drawLine(ctx, 0, -ascent!, wordWidth, -ascent!, "red")
+    // drawLine(ctx, 0, descent!, wordWidth, descent!, "blue")
+    ctx.restore()
+    startX = wordID % col === 3 ? 0 : startX + wordWidth
+    startY = wordID % col === 3 ? startY + wordHeight : startY
+  })
+
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}wordsBoxVis.png`, buf)
 }
 
 export function outputCanvas(canvas: Canvas, filename: string = "") {
@@ -283,4 +343,14 @@ function hexToRgb(hex: string) {
 function drawPoint(ctx: any, x: number, y: number) {
   ctx.fillStyle = "black"
   ctx.fillRect(x, y, 1, 1)
+}
+
+function drawLine(ctx: any, x1: number, y1: number, x2: number, y2: number, color?: string) {
+  ctx.beginPath()
+  ctx.strokeStyle = color ? color : "black"
+  ctx.lineWidth = 1
+  ctx.moveTo(x1, y1)
+  ctx.lineTo(x2, y2)
+  ctx.stroke()
+  ctx.closePath()
 }

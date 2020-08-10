@@ -24,9 +24,17 @@ export interface keyword {
   weight: number
   color: string
   fontFamily: string
+  fontWeight: string | number
+  fontSize?: number
   angle?: number
   regionID?: number
   epID?: number
+  box?: number[][]
+  width?: number
+  height?: number
+  ascent?: number
+  descent?: number
+  gap?: number
 }
 
 export interface fillingword {
