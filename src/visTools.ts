@@ -5,6 +5,7 @@ import { Options } from "./defaults"
 import { twoDimenArray } from "./helper"
 import { region } from "./processDistanceField"
 import { keyword } from "./processWords"
+import { iterate } from "./spiral"
 
 const prefix = "VisTool_"
 
@@ -216,6 +217,48 @@ export function allocateWordsVis(
   fs.writeFileSync(`${outputDir}/${prefix}allocateWordsVis_words.png`, buf)
 }
 
+export function spiralVis(
+  dist: twoDimenArray[],
+  regions: region[],
+  options: Options,
+  outputDir: string
+) {
+  const { iterate } = require("./spiral")
+  const { width, height } = options
+
+  let epImageData = distanceVis(dist, options, "", false)
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext("2d")
+  ctx.putImageData(epImageData, 0, 0)
+
+  regions.forEach((region) => {
+    const { extremePoints, dist: regionDist } = region
+    extremePoints.forEach((extremePoint) => {
+      const centerPoint = extremePoint.pos
+
+      ctx.beginPath()
+      ctx.arc(centerPoint[0], centerPoint[1], 3, 0, 360)
+      ctx.fillStyle = "yellow"
+      ctx.fill()
+      ctx.closePath()
+
+      let point = [centerPoint[0] + 1, centerPoint[1] + 1]
+      for (let i = 0; i < 20000; i++) {
+        point = iterate(regionDist, centerPoint, point, width, height)
+        // console.log(point)
+        if (!point) {
+          break
+        }
+        drawPoint(ctx, point[0], point[1])
+        // break
+      }
+    })
+  })
+
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}SpiralVis.png`, buf)
+}
+
 export function outputCanvas(canvas: Canvas, filename: string = "") {
   filename = `${filename} ${Date.now()}`
   const buf = canvas.toBuffer()
@@ -235,4 +278,9 @@ function hexToRgb(hex: string) {
   })
   // 返回的是rgb数组
   return rgb
+}
+
+function drawPoint(ctx: any, x: number, y: number) {
+  ctx.fillStyle = "black"
+  ctx.fillRect(x, y, 1, 1)
 }

@@ -120,7 +120,7 @@ function drawLine(ctx: any, x1: number, y1: number, x2: number, y2: number) {
   ctx.closePath()
 }
 
-export function calcDistance(p1: number[], p2: number[]) {
+export function calDistance(p1: number[], p2: number[]) {
   return Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]))
 }
 

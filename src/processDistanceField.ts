@@ -1,4 +1,4 @@
-import { roundFun, twoDimenArray, calcDistance } from "./helper"
+import { roundFun, twoDimenArray, calDistance } from "./helper"
 import { Options } from "./defaults"
 
 interface extremePoint {
@@ -12,10 +12,10 @@ interface extremePoint {
 
 export interface region {
   contour: number[][]
-  dist: twoDimenArray[]
+  dist: twoDimenArray
   extremePoints: extremePoint[]
-  value: number
-  area: number
+  value?: number
+  area?: number
   wordsNum?: number
   wordsWeight?: number
 }
@@ -56,7 +56,7 @@ export function processDistanceField(
     let hasAppend = false
     for (let i = 0; i < extremePoints.length; i++) {
       const e = extremePoints[i]
-      if (calcDistance(extremePoints[i].pos, maxPoint) < 100) {
+      if (calDistance(extremePoints[i].pos, maxPoint) < 100) {
         if (
           i >= 1 &&
           extremePoints[i - 1].pos[0] === maxPoint[0] &&
@@ -80,7 +80,7 @@ export function processDistanceField(
     }
     return {
       contour: contours[regionID],
-      dist,
+      dist: region,
       extremePoints,
     } as region
   })
@@ -95,7 +95,7 @@ export function processDistanceField(
     let hasClosePoint = false
     for (let i = 0; i < points.length; i++) {
       const p = points[i]
-      if (calcDistance(item.pos, p.pos) < 60) {
+      if (calDistance(item.pos, p.pos) < 60) {
         if (p.value < item.value) {
           points[i] = item
         }

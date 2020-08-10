@@ -28,7 +28,7 @@ function allocateWordsToRegions(
   const areaMaxId = areas.indexOf(areaMax)
   const totalArea = areas.reduce((totalArea, area) => totalArea + area, 0)
 
-  const values = regions.map((region) => region.value)
+  const values = regions.map((region) => region.value!)
   const valueMax = Math.max(...values)
   const valueMaxId = values.indexOf(valueMax)
 
@@ -36,9 +36,10 @@ function allocateWordsToRegions(
   let wordsSum = 0
   regions.forEach((region) => {
     const { area, value } = region
-    const wordsNum = value <= 18 && valueMax > 45 ? 0 : Math.round((area / totalArea) * keywordsNum)
+    const wordsNum =
+      value! <= 18 && valueMax > 45 ? 0 : Math.round((area! / totalArea) * keywordsNum)
     wordsSum += wordsNum
-    let wordsWeight = baseOnAreaOrDisValue ? area / areaMax : value / valueMax
+    let wordsWeight = baseOnAreaOrDisValue ? area! / areaMax : value! / valueMax
     if (wordsNum < 3) {
       wordsWeight = wordsMinWeight
     }
@@ -154,7 +155,7 @@ function allocateWordsToExtremePoint(
           area += (fontSize + 1) * (width + 4)
         }
       })
-      return area / region.area
+      return area / region.area!
     })
   }
 }

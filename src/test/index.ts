@@ -1,5 +1,12 @@
 import { preProcessImg } from "../imageProcess"
-import { groupVis, distanceVis, contourVis, extremePointVis, allocateWordsVis } from "../visTools"
+import {
+  groupVis,
+  distanceVis,
+  contourVis,
+  extremePointVis,
+  allocateWordsVis,
+  spiralVis,
+} from "../visTools"
 import { defaultOptions, Options } from "../defaults"
 import { splitText } from "../textProcess"
 import cv from "opencv4nodejs"
@@ -10,7 +17,7 @@ import { processWords, keyword } from "../processWords"
 import { allocateWords } from "../allocateWords"
 
 const dir = path.resolve(__dirname, "../../assets/")
-const image = cv.imread(path.resolve(dir, "input1.png"), cv.IMREAD_UNCHANGED)
+const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
 const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
 const options = defaultOptions
 const outputDir = path.resolve(__dirname, "imageProcess")
@@ -42,3 +49,5 @@ extremePointVis(dist, regions, options, outputDir)
 console.log(`------------------------------------------------------`)
 console.log("keywords 分配信息")
 allocateWordsVis(dist, regions, keywords, options, outputDir)
+
+spiralVis(dist, regions, options, outputDir)
