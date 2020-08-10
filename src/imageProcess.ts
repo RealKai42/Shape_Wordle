@@ -1,5 +1,5 @@
 import cv, { imshow, Vec4 } from "opencv4nodejs"
-import { Options } from "./defaults"
+import { Options } from "./interface"
 
 export function preProcessImg(image: cv.Mat, options: Options) {
   const cuttedImage = cutImage(image, options)

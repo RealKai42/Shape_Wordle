@@ -1,24 +1,5 @@
 import { roundFun, twoDimenArray, calDistance } from "./helper"
-import { Options } from "./defaults"
-
-interface extremePoint {
-  pos: number[]
-  value: number
-  regionID: number
-  ratio?: number
-  epWeight?: number
-  epNumber?: number
-}
-
-export interface region {
-  contour: number[][]
-  dist: twoDimenArray
-  extremePoints: extremePoint[]
-  value?: number
-  area?: number
-  wordsNum?: number
-  wordsWeight?: number
-}
+import { Options, extremePoint, region } from "./interface"
 
 export function processImageData(dist: number[][][], group: number[][], options: Options) {
   // 将输入的二维数组转为内部一位数组表现方式，优化性能

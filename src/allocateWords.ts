@@ -1,6 +1,6 @@
-import { keyword } from "./processWords"
-import { region } from "./processDistanceField"
-import { Options } from "./defaults"
+import { keyword } from "./interface"
+import { region } from "./interface"
+import { Options } from "./interface"
 import { roundFun, measureTextSize } from "./helper"
 
 export function allocateWords(

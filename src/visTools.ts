@@ -1,10 +1,10 @@
 import { createCanvas, createImageData, Canvas } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
-import { Options } from "./defaults"
+import { Options } from "./interface"
 import { twoDimenArray } from "./helper"
-import { region } from "./processDistanceField"
-import { keyword } from "./processWords"
+import { region } from "./interface"
+import { keyword } from "./interface"
 import { iterate } from "./spiral"
 
 const prefix = "VisTool_"

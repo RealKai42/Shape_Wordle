@@ -7,13 +7,13 @@ import {
   allocateWordsVis,
   spiralVis,
 } from "../visTools"
-import { defaultOptions, Options } from "../defaults"
+import { defaultOptions } from "../defaults"
 import { splitText } from "../textProcess"
 import cv from "opencv4nodejs"
 import fs from "fs"
 import path from "path"
 import { processImageData, processDistanceField } from "../processDistanceField"
-import { processWords, keyword } from "../processWords"
+import { processWords } from "../processWords"
 import { allocateWords } from "../allocateWords"
 
 const dir = path.resolve(__dirname, "../../assets/")

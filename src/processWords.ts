@@ -1,22 +1,6 @@
 import { roundFun, randomInt } from "./helper"
-import { Word } from "./textProcess"
-import { Options } from "./defaults"
-
-export interface keyword {
-  name: string
-  weight: number
-  color: string
-  fontFamily: string
-  angle?: number
-  regionID?: number
-  epID?: number
-}
-
-export interface fillingword {
-  name: string
-  weight: number
-  color: string
-}
+import { Word, keyword, fillingword } from "./interface"
+import { Options } from "./interface"
 
 export function processWords(words: Word[], options: Options) {
   const { angleMode, language } = options

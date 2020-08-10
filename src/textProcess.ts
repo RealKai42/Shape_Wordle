@@ -1,15 +1,7 @@
 import { lemmatizer } from "lemmatizer"
 import { WordTokenizer, stopwords } from "natural"
 import nodejieba from "nodejieba"
-import { Options } from "./defaults"
-
-export interface WordCounter {
-  [key: string]: number
-}
-export interface Word {
-  name: string
-  weight: number
-}
+import { Options, WordCounter, Word } from "./interface"
 
 export function splitText(text: string, options: Options) {
   const chinesePattern = new RegExp("[\u4E00-\u9FA5]+") // 监测到任意中文则返回true
