@@ -319,6 +319,25 @@ export function wordsBoxVis(keywords: keyword[], outputDir: string) {
   fs.writeFileSync(`${outputDir}/${prefix}wordsBoxVis.png`, buf)
 }
 
+export function keyWordsVis(
+  keywords: keyword[],
+  dist: twoDimenArray[],
+  options: Options,
+  outputDir: string
+) {
+  const { width, height } = options
+
+  let epImageData = distanceVis(dist, options, "", false)
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext("2d")
+  ctx.putImageData(epImageData, 0, 0)
+  keywords.forEach((word) => {
+    drawKeyword(ctx, word)
+  })
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}keywordsVis.png`, buf)
+}
+
 export function outputCanvas(canvas: Canvas, filename: string = "") {
   filename = `${filename} ${Date.now()}`
   const buf = canvas.toBuffer()
@@ -338,6 +357,32 @@ function hexToRgb(hex: string) {
   })
   // 返回的是rgb数组
   return rgb
+}
+
+function drawKeyword(ctx: any, word: keyword) {
+  const {
+    name,
+    color,
+    position,
+    width,
+    height,
+    angle,
+    fontFamily,
+    fontWeight,
+    fontSize,
+    box: boxes,
+  } = word
+  // 绘制文字
+  ctx.save()
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+  // ctx.fillStyle = color
+  ctx.fillStyle = word.state ? "black" : "red"
+  ctx.translate(position![0] - width! / 2, position![1] + height! / 2)
+  ctx.rotate(angle)
+  ctx.textAlign = "start"
+  ctx.textBaseline = "alphabetic"
+  ctx.fillText(name, 0, 0)
+  ctx.restore()
 }
 
 function drawPoint(ctx: any, x: number, y: number) {

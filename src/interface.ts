@@ -27,6 +27,7 @@ export interface keyword {
   fontWeight: string | number
   fontSize?: number
   angle?: number
+  position?: number[]
   regionID?: number
   epID?: number
   box?: number[][]
@@ -35,6 +36,7 @@ export interface keyword {
   ascent?: number
   descent?: number
   gap?: number
+  state?: boolean
 }
 
 export interface fillingword {

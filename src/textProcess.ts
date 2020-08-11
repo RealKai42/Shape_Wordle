@@ -40,7 +40,8 @@ export function splitText(text: string, options: Options) {
       ) {
         return
       } else {
-        words.push(options.lemmatization ? lemmatizer(word) : word)
+        word = options.lemmatization ? lemmatizer(word) : word
+        word.length > 2 && words.push(word)
       }
     })
   }

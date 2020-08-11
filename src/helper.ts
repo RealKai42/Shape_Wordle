@@ -105,7 +105,7 @@ export function measureTextSize(
   }
   const height = last - first
   // todo: ascent的计算好像有bug，目前不影响结果，暂时搁置
-  const ascent = last - fillY
+  const ascent = fillY - last
   const descent = last - fillY
   return { width, height, ascent, descent }
 }

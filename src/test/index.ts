@@ -16,13 +16,12 @@ import { processImageData, processDistanceField } from "../processDistanceField"
 import { processWords } from "../processWords"
 import { allocateWords } from "../allocateWords"
 import { generateWordle } from "../wordle"
-import { keyword } from "../interface"
-import { wordsBoxVis } from "../visTools"
+import { wordsBoxVis, keyWordsVis } from "../visTools"
 
 const dir = path.resolve(__dirname, "../../assets/")
 const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
-const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
-// const text = fs.readFileSync(path.resolve(dir, "demo_text_ch.txt"), "utf-8")
+// const text = fs.readFileSync(path.resolve(dir, "demo_text_en.txt"), "utf-8")
+const text = fs.readFileSync(path.resolve(dir, "demo_text_ch.txt"), "utf-8")
 const options = defaultOptions
 const outputDir = path.resolve(__dirname, "imageProcess")
 if (!fs.existsSync(outputDir)) {
@@ -54,18 +53,20 @@ generateWordle(keywords, regions, group, options)
 // contourVis(contours, options, outputDir)
 
 // 可视化极点提取信息
-// console.log(`------------------------------------------------------`)
-// console.log("regions 信息")
-// extremePointVis(dist, regions, options, outputDir)
+console.log(`------------------------------------------------------`)
+console.log("regions 信息")
+extremePointVis(dist, regions, options, outputDir)
 
 // 可视化单词分配到region和极点结果
-// console.log(`------------------------------------------------------`)
-// console.log("keywords 分配信息")
-// allocateWordsVis(dist, regions, keywords, options, outputDir)
+console.log(`------------------------------------------------------`)
+console.log("keywords 分配信息")
+allocateWordsVis(dist, regions, keywords, options, outputDir)
 
 // 可视化螺旋线生成效果
 // spiralVis(dist, regions, options, outputDir)
 
 // 可视化单词box构建，需构建单词box后调用
-// console.log(keywords)
 wordsBoxVis(keywords, outputDir)
+
+// 可视化 keywords位置
+keyWordsVis(keywords, dist, options, outputDir)
