@@ -64,7 +64,7 @@ export function generateWordle(
 
 function createWordBox(word: keyword, options: Options) {
   // 设置每个单词整体的box和每个字母的box
-  const { eps, minFontSize, maxFontSize } = options
+  const { minFontSize, maxFontSize } = options
   const fontSize = Math.round((maxFontSize - minFontSize) * Math.sqrt(word.weight) + minFontSize)
   const { width, height, descent, ascent } = measureTextSize(
     word.name,
@@ -109,10 +109,8 @@ function randomPlaceWord(
   group: twoDimenArray
 ) {
   // 在regionID的center附近随机放置单词
-  let range = center.value / 3
-  if (word.weight > 0.8) {
-    range = center.value / 5
-  }
+  let range = word.weight > 0.8 ? center.value / 5 : center.value / 3
+
   const xmax = center.pos[0] + range,
     xmin = center.pos[0] - range
   const ymax = center.pos[1] + range,
@@ -302,7 +300,6 @@ function getCornerPoints(word: keyword) {
     [pos![0] + width! / 2, pos![1] + height! / 2], // right bottom
     [pos![0] - width! / 2, pos![1] + height! / 2], // left bottom
   ]
-
   if (angle != 0) {
     return p.map((p) => [
       (p[0] - pos![0]) * Math.cos(angle!) - (p[1] - pos![1]) * Math.sin(angle!) + pos![0],

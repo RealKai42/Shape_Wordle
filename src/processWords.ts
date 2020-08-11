@@ -41,12 +41,16 @@ function separateWords(words: Word[], options: Options) {
   const start = words.length >= 160 ? keywordsNum : 0
   const end = Math.min(words.length, start + 200)
 
-  const fillingWords = words
-    .slice(start, end)
-    .map(
-      ({ name }) =>
-        ({ name: name.trim(), weight: 0.05, color: fillingWordColor || "#000000" } as fillingword)
-    )
+  const fillingWords = words.slice(start, end).map(
+    ({ name }) =>
+      ({
+        name: name.trim(),
+        weight: 0.05,
+        color: fillingWordColor || "#000000",
+        fontFamily,
+        fontWeight,
+      } as fillingword)
+  )
 
   while (fillingWords.length < 200) {
     fillingWords.push({ ...fillingWords[randomInt(0, fillingWords.length)] })

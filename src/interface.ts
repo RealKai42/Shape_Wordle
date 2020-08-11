@@ -24,7 +24,7 @@ export interface keyword {
   weight: number
   color: string
   fontFamily: string
-  fontWeight: string | number
+  fontWeight: string
   fontSize?: number
   angle?: number
   position?: number[]
@@ -43,6 +43,8 @@ export interface fillingword {
   name: string
   weight: number
   color: string
+  fontFamily: string
+  fontWeight: string
 }
 
 export interface WordCounter {

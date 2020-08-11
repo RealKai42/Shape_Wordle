@@ -53,20 +53,20 @@ generateWordle(keywords, regions, group, options)
 // contourVis(contours, options, outputDir)
 
 // 可视化极点提取信息
-console.log(`------------------------------------------------------`)
-console.log("regions 信息")
-extremePointVis(dist, regions, options, outputDir)
+// console.log(`------------------------------------------------------`)
+// console.log("regions 信息")
+// extremePointVis(dist, regions, options, outputDir)
 
 // 可视化单词分配到region和极点结果
-console.log(`------------------------------------------------------`)
-console.log("keywords 分配信息")
-allocateWordsVis(dist, regions, keywords, options, outputDir)
+// console.log(`------------------------------------------------------`)
+// console.log("keywords 分配信息")
+// allocateWordsVis(dist, regions, keywords, options, outputDir)
 
 // 可视化螺旋线生成效果
 // spiralVis(dist, regions, options, outputDir)
 
 // 可视化单词box构建，需构建单词box后调用
-wordsBoxVis(keywords, outputDir)
+// wordsBoxVis(keywords, outputDir)
 
 // 可视化 keywords位置
-keyWordsVis(keywords, dist, options, outputDir)
+keyWordsVis(keywords, dist, options, outputDir, false)

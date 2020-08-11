@@ -1,4 +1,4 @@
-import { createCanvas, createImageData, Canvas } from "canvas"
+import { createCanvas, createImageData, Canvas, CanvasRenderingContext2D } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
 import { Options, keyword } from "./interface"
@@ -323,7 +323,8 @@ export function keyWordsVis(
   keywords: keyword[],
   dist: twoDimenArray[],
   options: Options,
-  outputDir: string
+  outputDir: string,
+  drawBox: boolean = false
 ) {
   const { width, height } = options
 
@@ -331,9 +332,14 @@ export function keyWordsVis(
   const canvas = createCanvas(width, height)
   const ctx = canvas.getContext("2d")
   ctx.putImageData(epImageData, 0, 0)
+
+  const preGlobalAlpha = ctx.globalAlpha
+  ctx.globalAlpha = 0.7
   keywords.forEach((word) => {
     drawKeyword(ctx, word)
+    drawBox && drawWordBox(ctx, word)
   })
+  ctx.globalAlpha = preGlobalAlpha
   const buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}keywordsVis.png`, buf)
 }
@@ -377,20 +383,47 @@ function drawKeyword(ctx: any, word: keyword) {
   ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
   // ctx.fillStyle = color
   ctx.fillStyle = word.state ? "black" : "red"
-  ctx.translate(position![0] - width! / 2, position![1] + height! / 2)
-  ctx.rotate(angle)
+  // ctx.translate(position![0] - width! / 2, position![1] + height! / 2)
+  ctx.translate(position![0], position![1])
+  ctx.rotate(angle!)
   ctx.textAlign = "start"
   ctx.textBaseline = "alphabetic"
-  ctx.fillText(name, 0, 0)
+  ctx.fillText(name, -width! / 2, height! / 2)
   ctx.restore()
 }
 
-function drawPoint(ctx: any, x: number, y: number) {
+function drawWordBox(ctx: CanvasRenderingContext2D, word: keyword) {
+  const { position, width, height, angle, box: boxes } = word
+  ctx.save()
+  ctx.translate(position![0], position![1])
+  ctx.rotate(angle!)
+  const baseX = -width! / 2,
+    baseY = height! / 2
+  for (let i = 0; i < boxes!.length; i++) {
+    const box = boxes![i]
+    ctx.fillStyle = i === 0 ? "red" : "green"
+    const width = box[2],
+      height = box[3]
+    const boxX = box[0] + baseX,
+      boxY = box[1] - height + baseY
+    ctx.fillRect(boxX, boxY, width, height)
+  }
+  ctx.restore()
+}
+
+function drawPoint(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.fillStyle = "black"
   ctx.fillRect(x, y, 1, 1)
 }
 
-function drawLine(ctx: any, x1: number, y1: number, x2: number, y2: number, color?: string) {
+function drawLine(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  color?: string
+) {
   ctx.beginPath()
   ctx.strokeStyle = color ? color : "black"
   ctx.lineWidth = 1
