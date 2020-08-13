@@ -195,7 +195,7 @@ function putWord(
   }
 
   function getRandomPosition(): [number[], number] {
-    const offset = 80
+    const offset = 300
     const center = [canvasWidth / 2, canvasHeight / 2]
     const [xMin, xMax] = [center[0] - offset, center[0] + offset]
     const [yMin, yMax] = [center[1] - offset, center[1] + offset]
