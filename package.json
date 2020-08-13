@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "rimraf ./build && tsc && node ./build/test/index.js",
-    "build": "tsc",
-    "start": "rimraf ./build && tsc && node ./build/index.js"
+    "demo": "rimraf ./build && tsc && node ./build/test/demo.js",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
