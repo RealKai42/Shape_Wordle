@@ -16,7 +16,8 @@ import { processImageData, processDistanceField } from "../processDistanceField"
 import { processWords } from "../processWords"
 import { allocateWords } from "../allocateWords"
 import { generateWordle } from "../wordle"
-import { wordsBoxVis, keyWordsVis } from "../visTools"
+import { wordsBoxVis, keyWordsVis, gridVis, fillingWordsVis } from "../visTools"
+import { allocateFillingWords } from "../filling"
 
 const dir = path.resolve(__dirname, "../../assets/")
 const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
@@ -36,6 +37,7 @@ const { dist, group } = processImageData(distRaw, groupRaw, defaultOptions)
 const regions = processDistanceField(dist, contours, areas)
 allocateWords(keywords, regions, areas, options)
 generateWordle(keywords, regions, group, options)
+const renderableFillingWords = allocateFillingWords(keywords, fillingWords, group, options)
 
 // 展示文本预处理
 // console.log(`------------------------------------------------------`)
@@ -70,3 +72,6 @@ generateWordle(keywords, regions, group, options)
 
 // 可视化 keywords位置
 keyWordsVis(keywords, dist, options, outputDir, false)
+
+// 可视化 filling中计算得到的grid
+fillingWordsVis(renderableFillingWords, keywords, dist, options, outputDir)

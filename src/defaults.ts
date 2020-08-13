@@ -11,7 +11,7 @@ export const defaultOptions: Options = {
   stopwords: true,
   filterNumber: true,
   keywordsNum: 60,
-  angleMode: 2,
+  angleMode: 5,
   language: "cn",
   baseOnAreaOrDisValue: true,
   isMaxMode: false,
@@ -19,7 +19,7 @@ export const defaultOptions: Options = {
   minFontSize: 2,
 
   keywordColor: "#000000",
-  fillingWordColor: "#ff0000",
+  fillingWordColor: "#0000ff",
   fillingFontSize: 10,
   cnFontFamily: "siyuan",
   enFontFamily: "Hobo std",

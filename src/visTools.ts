@@ -1,8 +1,8 @@
 import { createCanvas, createImageData, Canvas, CanvasRenderingContext2D } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
-import { Options, keyword } from "./interface"
-import { twoDimenArray } from "./helper"
+import { Options, keyword, fillingword, renderableFillingWord } from "./interface"
+import { twoDimenArray, roundFun } from "./helper"
 import { region } from "./interface"
 import { iterate } from "./spiral"
 
@@ -324,7 +324,8 @@ export function keyWordsVis(
   dist: twoDimenArray[],
   options: Options,
   outputDir: string,
-  drawBox: boolean = false
+  drawBox: boolean = false,
+  output: boolean = true
 ) {
   const { width, height } = options
 
@@ -334,38 +335,84 @@ export function keyWordsVis(
   ctx.putImageData(epImageData, 0, 0)
 
   const preGlobalAlpha = ctx.globalAlpha
-  ctx.globalAlpha = 0.7
+  ctx.globalAlpha = 1
   keywords.forEach((word) => {
     drawKeyword(ctx, word)
     drawBox && drawWordBox(ctx, word)
   })
   ctx.globalAlpha = preGlobalAlpha
-  const buf = canvas.toBuffer()
-  fs.writeFileSync(`${outputDir}/${prefix}keywordsVis.png`, buf)
-}
-
-export function outputCanvas(canvas: Canvas, filename: string = "") {
-  filename = `${filename} ${Date.now()}`
-  const buf = canvas.toBuffer()
-  fs.writeFileSync(`canvas/${filename}.png`, buf)
-}
-
-function hexToRgb(hex: string) {
-  const rgb: number[] = []
-  hex = hex.substr(1) //去除前缀 # 号
-  if (hex.length === 3) {
-    // 处理 "#abc" 成 "#aabbcc"
-    hex = hex.replace(/(.)/g, "$1$1")
+  if (output) {
+    const buf = canvas.toBuffer()
+    fs.writeFileSync(`${outputDir}/${prefix}keywordsVis.png`, buf)
   }
-  hex.replace(/../g, (color) => {
-    rgb.push(parseInt(color, 0x10)) //按16进制将字符串转换为数字
-    return color
-  })
-  // 返回的是rgb数组
-  return rgb
+  return ctx.getImageData(0, 0, width, height)
 }
 
-function drawKeyword(ctx: any, word: keyword) {
+export function gridVis(grid: twoDimenArray) {
+  const [width, height] = grid.getShape()
+  let canvas = createCanvas(width, height)
+  let ctx = canvas.getContext("2d")
+
+  let filledPixels = 0
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      if (grid.get(x, y) === 1) {
+        ctx.fillStyle = "green"
+        ctx.fillRect(x, y, 1, 1)
+        filledPixels++
+      }
+    }
+  }
+
+  let ratio = filledPixels / (width * height)
+  console.log("空白率 " + ratio.toPrecision(5))
+
+  outputCanvas(canvas, "grid")
+}
+
+export function textPixelsVis(
+  word: fillingword,
+  wordPixels: number[][],
+  angle: number,
+  fontSize: number,
+  gridSize: number
+) {
+  const canvasWidth = 200,
+    canvasHeight = 200
+  const canvas = createCanvas(canvasWidth, canvasHeight)
+  const ctx = canvas.getContext("2d")
+  const [x, y] = [canvasWidth / 2, canvasHeight / 2]
+  ctx.fillStyle = "#ff0000"
+  for (let pix of wordPixels) {
+    ctx.fillRect(x + pix[0] * gridSize, y + pix[1] * gridSize, gridSize, gridSize)
+  }
+
+  drawFillingword(ctx, word, x, y, fontSize, angle)
+
+  outputCanvas(canvas, "textPixels")
+}
+
+export function fillingWordsVis(
+  fillingWords: renderableFillingWord[],
+  keywords: keyword[],
+  dist: twoDimenArray[],
+  options: Options,
+  outputDir: string
+) {
+  const { width, height } = options
+  let epImageData = keyWordsVis(keywords, dist, options, outputDir, false, false)
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext("2d")
+  ctx.putImageData(epImageData, 0, 0)
+
+  fillingWords.forEach((word) => drawRenderableFillingWord(ctx, word))
+
+  const buf = canvas.toBuffer()
+  fs.writeFileSync(`${outputDir}/${prefix}fillingWords.png`, buf)
+}
+
+export function drawKeyword(ctx: CanvasRenderingContext2D, word: keyword, wordColor?: string) {
   const {
     name,
     color,
@@ -382,13 +429,53 @@ function drawKeyword(ctx: any, word: keyword) {
   ctx.save()
   ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
   // ctx.fillStyle = color
-  ctx.fillStyle = word.state ? "black" : "red"
-  // ctx.translate(position![0] - width! / 2, position![1] + height! / 2)
+  ctx.fillStyle = wordColor ? wordColor : word.state ? "black" : "red"
   ctx.translate(position![0], position![1])
   ctx.rotate(angle!)
   ctx.textAlign = "start"
   ctx.textBaseline = "alphabetic"
   ctx.fillText(name, -width! / 2, height! / 2)
+  ctx.restore()
+}
+
+export function drawFillingword(
+  ctx: CanvasRenderingContext2D,
+  word: fillingword,
+  x: number,
+  y: number,
+  fontSize: number,
+  angle: number,
+  wordColor?: string
+) {
+  const { fontWeight, fontFamily } = word
+  ctx.save()
+
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.textAlign = "start"
+  ctx.textBaseline = "alphabetic"
+  ctx.fillStyle = wordColor ? wordColor : "#000000"
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+  ctx.fillText(word.name, 0, 0)
+
+  ctx.restore()
+}
+
+export function drawRenderableFillingWord(
+  ctx: CanvasRenderingContext2D,
+  word: renderableFillingWord
+) {
+  const { x, y, angle, color, fontSize, fontWeight, fontFamily } = word
+  ctx.save()
+
+  ctx.translate(x, y)
+  ctx.rotate(angle)
+  ctx.textAlign = "start"
+  ctx.textBaseline = "alphabetic"
+  ctx.fillStyle = color
+  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
+  ctx.fillText(word.name, 0, 0)
+
   ctx.restore()
 }
 
@@ -431,4 +518,29 @@ function drawLine(
   ctx.lineTo(x2, y2)
   ctx.stroke()
   ctx.closePath()
+}
+
+export function hexToRgb(hex: string) {
+  const rgb: number[] = []
+  hex = hex.substr(1) //去除前缀 # 号
+  if (hex.length === 3) {
+    // 处理 "#abc" 成 "#aabbcc"
+    hex = hex.replace(/(.)/g, "$1$1")
+  }
+  hex.replace(/../g, (color) => {
+    rgb.push(parseInt(color, 0x10)) //按16进制将字符串转换为数字
+    return color
+  })
+  // 返回的是rgb数组
+  return rgb
+}
+
+export function outputCanvas(canvas: Canvas, filename: string = "") {
+  filename = `${filename} ${Date.now()}`
+  const buf = canvas.toBuffer()
+  const dir = "build/canvas"
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir)
+  }
+  fs.writeFileSync(`${dir}/${filename}.png`, buf)
 }

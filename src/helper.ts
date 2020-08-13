@@ -21,11 +21,11 @@ export class twoDimenArray {
   }
 
   get(x: number, y: number): number {
-    return this.array[y * this.width + x]
+    return this.array[Math.floor(y) * this.width + Math.floor(x)]
   }
 
   set(x: number, y: number, value: number): void {
-    this.array[y * this.width + x] = value
+    this.array[Math.floor(y) * this.width + Math.floor(x)] = value
   }
 
   getShape() {

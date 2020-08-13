@@ -47,12 +47,41 @@ export interface fillingword {
   fontWeight: string
 }
 
+export interface renderableFillingWord {
+  name: string
+  x: number
+  y: number
+  fontSize: number
+  fontFamily: string
+  fontWeight: string
+  color: string
+  angle: number
+  alpha: number
+}
+
 export interface WordCounter {
   [key: string]: number
 }
 export interface Word {
   name: string
   weight: number
+}
+
+export interface fillingSettings {
+  canvasWidth: number
+  canvasHeight: number
+  gridSize: number // 每个grid的边长
+  gridWidth: number
+  gridHeight: number
+  rotatedWordsRatio: number // 带角度的filling words占总体的比例
+  minRotation: number
+  maxRotation: number
+  rotationRange: number
+  angleMode: number
+  // 螺旋线相关设定
+  radiusStep: number
+  angleStep: number //角度值
+  maxRadius: number // 螺旋线最大半径
 }
 
 export type Options = {
