@@ -1,4 +1,11 @@
-import { keyword, fillingword, Options, fillingSettings, renderableFillingWord } from "./interface"
+import {
+  keyword,
+  fillingword,
+  Options,
+  fillingSettings,
+  renderableFillingWord,
+  renderableKeyword,
+} from "./interface"
 import { twoDimenArray, calDistance } from "./helper"
 import { createCanvas } from "canvas"
 import {
@@ -16,20 +23,12 @@ export function allocateFillingWords(
   group: twoDimenArray,
   options: Options
 ) {
-  const {
-    width: canvasWidth,
-    height: canvasHeight,
-    fillingFontSize,
-    angleMode,
-    fontFamily,
-    maxFontSize,
-    minFontSize,
-  } = options
+  const { width: canvasWidth, height: canvasHeight, fillingFontSize, angleMode } = options
 
   const fillingSettings: fillingSettings = {
     canvasWidth: canvasWidth,
     canvasHeight: canvasHeight,
-    gridSize: 2,
+    gridSize: 1,
     rotatedWordsRatio: 0.5,
     minRotation: -Math.PI / 2,
     maxRotation: Math.PI / 2,
@@ -60,10 +59,6 @@ export function allocateFillingWords(
   // 将canvas划分成格子，进行分布
   const grid = createGrid(keywords, group, fillingSettings)
 
-  gridVis(grid)
-  // const pixels = getTextPixels(fillingWords[0], 45, 10, fillingSettings)
-  // textPixelsVis(fillingWords[0], pixels as number[][], 45, 10, fillingSettings.gridSize)
-
   // 多次填充，保证填充率
   let fontSize = fillingFontSize,
     alpha = 1
@@ -75,18 +70,37 @@ export function allocateFillingWords(
     fillingWords.forEach((word) => {
       putWord(word, fontSize, alpha, grid, renderableFillingWords, fillingSettings)
     })
-    console.log(
-      `第${i + 1}次filling，当前filling words 数量 ${
-        renderableFillingWords.length
-      }, fontSize: ${fontSize}, alpha: ${alpha}`
-    )
-    gridVis(grid)
+    // console.log(
+    //   `第${i + 1}次filling，当前filling words 数量 ${
+    //     renderableFillingWords.length
+    //   }, fontSize: ${fontSize}, alpha: ${alpha}`
+    // )
 
     fontSize = fontSize > deltaFontSize ? fontSize - deltaFontSize : deltaFontSize
     alpha = alpha > deltaAlpha ? alpha - deltaAlpha : deltaAlpha
   }
 
   return renderableFillingWords
+}
+
+export function generateRenderableKeywords(keywords: keyword[]) {
+  return keywords
+    .filter((word) => word.state && word.position)
+    .map(
+      (word) =>
+        ({
+          name: word.name,
+          x: word.position![0],
+          y: word.position![1],
+          drawX: -word.width! / 2,
+          drawY: +word.height! / 2,
+          fontSize: word.fontSize as number,
+          fontFamily: word.fontFamily,
+          fontWeight: word.fontWeight,
+          color: word.color,
+          angle: word.angle as number,
+        } as renderableKeyword)
+    )
 }
 
 function createGrid(keywords: keyword[], group: twoDimenArray, fillingSettings: fillingSettings) {

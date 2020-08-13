@@ -11,7 +11,7 @@ export const defaultOptions: Options = {
   stopwords: true,
   filterNumber: true,
   keywordsNum: 60,
-  angleMode: 5,
+  angleMode: 2,
   language: "cn",
   baseOnAreaOrDisValue: true,
   isMaxMode: false,

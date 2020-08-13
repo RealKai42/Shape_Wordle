@@ -465,9 +465,11 @@ export function drawRenderableFillingWord(
   ctx: CanvasRenderingContext2D,
   word: renderableFillingWord
 ) {
-  const { x, y, angle, color, fontSize, fontWeight, fontFamily } = word
+  const { x, y, angle, color, alpha, fontSize, fontWeight, fontFamily } = word
+  const preAlpha = ctx.globalAlpha
   ctx.save()
 
+  ctx.globalAlpha = alpha
   ctx.translate(x, y)
   ctx.rotate(angle)
   ctx.textAlign = "start"
@@ -476,6 +478,7 @@ export function drawRenderableFillingWord(
   ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`
   ctx.fillText(word.name, 0, 0)
 
+  ctx.globalAlpha = preAlpha
   ctx.restore()
 }
 

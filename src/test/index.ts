@@ -17,7 +17,9 @@ import { processWords } from "../processWords"
 import { allocateWords } from "../allocateWords"
 import { generateWordle } from "../wordle"
 import { wordsBoxVis, keyWordsVis, gridVis, fillingWordsVis } from "../visTools"
-import { allocateFillingWords } from "../filling"
+import { allocateFillingWords, generateRenderableKeywords } from "../filling"
+import { renderableKeyword, keyword } from "../interface"
+import { draw } from "../draw"
 
 const dir = path.resolve(__dirname, "../../assets/")
 const image = cv.imread(path.resolve(dir, "input2.png"), cv.IMREAD_UNCHANGED)
@@ -37,7 +39,11 @@ const { dist, group } = processImageData(distRaw, groupRaw, defaultOptions)
 const regions = processDistanceField(dist, contours, areas)
 allocateWords(keywords, regions, areas, options)
 generateWordle(keywords, regions, group, options)
+const renderableKeywords = generateRenderableKeywords(keywords)
 const renderableFillingWords = allocateFillingWords(keywords, fillingWords, group, options)
+
+const wordle = draw(renderableKeywords, renderableFillingWords, options)
+fs.writeFileSync("wordle.png", wordle)
 
 // 展示文本预处理
 // console.log(`------------------------------------------------------`)

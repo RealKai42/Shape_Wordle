@@ -39,6 +39,19 @@ export interface keyword {
   state?: boolean
 }
 
+export interface renderableKeyword {
+  name: string
+  x: number
+  y: number
+  drawX: number
+  drawY: number
+  fontSize: number
+  fontFamily: string
+  fontWeight: string
+  color: string
+  angle: number
+}
+
 export interface fillingword {
   name: string
   weight: number
@@ -70,7 +83,7 @@ export interface Word {
 export interface fillingSettings {
   canvasWidth: number
   canvasHeight: number
-  gridSize: number // 每个grid的边长
+  gridSize: number // 每个grid的边长，建议为1，更大边长会加快filling速度，但会导致overlap
   gridWidth: number
   gridHeight: number
   rotatedWordsRatio: number // 带角度的filling words占总体的比例
