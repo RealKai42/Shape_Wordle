@@ -1,8 +1,8 @@
-import { createCanvas, createImageData, Canvas, CanvasRenderingContext2D } from "canvas"
+import { createCanvas, Canvas, CanvasRenderingContext2D } from "canvas"
 import { ColorInterpolator } from "color-extensions"
 import fs from "fs"
 import { Options, keyword, fillingword, renderableFillingWord } from "./interface"
-import { twoDimenArray, roundFun } from "./helper"
+import { twoDimenArray } from "./helper"
 import { region } from "./interface"
 import { iterate } from "./spiral"
 
@@ -15,24 +15,18 @@ export function groupVis(groupData: twoDimenArray, options: Options, outputDir: 
   const [width, height] = groupData.getShape()
 
   // 用ImageData批量填充
-  const imgData = createImageData(options.width, options.height)
-  let img_i = 0
   const allGroupData = []
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       if (allGroupData.indexOf(groupData.get(x, y)) === -1) allGroupData.push(groupData.get(x, y))
-      const color = hexToRgb(colors[groupData.get(x, y)])
-      imgData.data[img_i] = color[0]
-      imgData.data[img_i + 1] = color[1]
-      imgData.data[img_i + 2] = color[2]
-      imgData.data[img_i + 3] = 255
-      img_i += 4
+      const color = colors[groupData.get(x, y)]
+      ctx.fillStyle = color
+      ctx.fillRect(x, y, 1, 1)
     }
   }
   console.log("分组数据为", allGroupData)
-  ctx.putImageData(imgData, 0, 0)
-  const buf = canvas.toBuffer()
 
+  const buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}groupVis.png`, buf)
 }
 
@@ -65,49 +59,40 @@ export function distanceVis(
 
   const canvas = createCanvas(options.width, options.height)
   const ctx = canvas.getContext("2d")
-  const imgData = createImageData(options.width, options.height)
   for (let dist of distData) {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const distValue = dist.get(x, y)
         if (distValue > 0) {
-          const i = (y * options.width + x) * 4
-          const color = interpolator.getColor((distValue - min) / (max - min), "object")
-          imgData.data[i] = color.r
-          imgData.data[i + 1] = color.g
-          imgData.data[i + 2] = color.b
-          imgData.data[i + 3] = 255
+          const color = interpolator.getColor((distValue - min) / (max - min), "hex")
+          ctx.fillStyle = color
+          ctx.fillRect(x, y, 1, 1)
         }
       }
     }
   }
 
   if (outputImage) {
-    ctx.putImageData(imgData, 0, 0)
     const buf = canvas.toBuffer()
     fs.writeFileSync(`${outputDir}/${prefix}distanceVis.png`, buf)
   }
+  const imgData = ctx.getImageData(0, 0, width, height)
   return imgData
 }
 
 export function contourVis(contourData: number[][][], options: Options, outputDir: string) {
   const canvas = createCanvas(options.width, options.height)
   const ctx = canvas.getContext("2d")
-  const imgData = createImageData(options.width, options.height)
   const colors = options.colors
   for (let i in contourData) {
     for (let j of contourData[i]) {
-      const x = j[1]
-      const y = j[0]
-      const imgData_i = (x * options.width + y) * 4
-      const color = hexToRgb(colors[i])
-      imgData.data[imgData_i] = color[0]
-      imgData.data[imgData_i + 1] = color[1]
-      imgData.data[imgData_i + 2] = color[2]
-      imgData.data[imgData_i + 3] = 255
+      const x = j[0]
+      const y = j[1]
+      const color = colors[i]
+      ctx.fillStyle = color
+      ctx.fillRect(x, y, 4, 4)
     }
   }
-  ctx.putImageData(imgData, 0, 0)
   const buf = canvas.toBuffer()
   fs.writeFileSync(`${outputDir}/${prefix}contourVis.png`, buf)
 }

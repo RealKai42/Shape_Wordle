@@ -43,41 +43,42 @@ const renderableKeywords = generateRenderableKeywords(keywords)
 const renderableFillingWords = allocateFillingWords(keywords, fillingWords, group, options)
 
 const wordle = draw(renderableKeywords, renderableFillingWords, options)
-fs.writeFileSync("wordle.png", wordle)
+fs.writeFileSync(path.resolve(outputDir, "wordle.png"), wordle)
 
 // 展示文本预处理
-// console.log(`------------------------------------------------------`)
-// console.log("单词数量", words.length)
-// for (let i = 0; i < 10; i++) {
-//   console.log(words[i])
-// }
+console.log(`------------------------------------------------------`)
+console.log("单词数量", words.length)
+for (let i = 0; i < 10; i++) {
+  console.log(words[i])
+}
+
 // 可视化 distance field
-// distanceVis(dist, options, outputDir)
+distanceVis(dist, options, outputDir)
 
 // 可视化分组信息
-// groupVis(group, options, outputDir)
+groupVis(group, options, outputDir)
 
 // 可视化轮廓识别信息
-// contourVis(contours, options, outputDir)
+contourVis(contours, options, outputDir)
 
 // 可视化极点提取信息
-// console.log(`------------------------------------------------------`)
-// console.log("regions 信息")
-// extremePointVis(dist, regions, options, outputDir)
+console.log(`------------------------------------------------------`)
+console.log("regions 信息")
+extremePointVis(dist, regions, options, outputDir)
 
 // 可视化单词分配到region和极点结果
-// console.log(`------------------------------------------------------`)
-// console.log("keywords 分配信息")
-// allocateWordsVis(dist, regions, keywords, options, outputDir)
+console.log(`------------------------------------------------------`)
+console.log("keywords 分配信息")
+allocateWordsVis(dist, regions, keywords, options, outputDir)
 
 // 可视化螺旋线生成效果
-// spiralVis(dist, regions, options, outputDir)
+spiralVis(dist, regions, options, outputDir)
 
 // 可视化单词box构建，需构建单词box后调用
-// wordsBoxVis(keywords, outputDir)
+wordsBoxVis(keywords, outputDir)
 
 // 可视化 keywords位置
 keyWordsVis(keywords, dist, options, outputDir, false)
 
-// 可视化 filling中计算得到的grid
+// 可视化 filling位置
 fillingWordsVis(renderableFillingWords, keywords, dist, options, outputDir)
