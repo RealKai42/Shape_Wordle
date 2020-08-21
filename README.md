@@ -31,20 +31,17 @@ clone 本项目，并执行`yarn`安装依赖，项目依赖的[opencv4nodejs](h
 
 ## 效果展示
 
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic0.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic1.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic2.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic3.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic4.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic5.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic6.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic7.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic8.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic9.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic10.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic11.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic12.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic13.png)
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic0.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic1.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic2.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic3.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic4.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic5.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic6.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic7.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic8.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic9.png" style="zoom:50%">
+<img src="https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic10.png" style="zoom:50%">
 
 ## 其他
 
