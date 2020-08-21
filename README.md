@@ -29,24 +29,24 @@ clone 本项目，并执行`yarn`安装依赖，项目依赖的[opencv4nodejs](h
 - [ ] 纯前端版本
 - [ ] 纯前端带 GUI 版本
 
+## 效果展示
+
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic0.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic1.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic2.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic3.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic4.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic5.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic6.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic7.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic8.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic9.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic10.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic11.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic12.png)
+![image](https://github.com/Kaiyiwing/Shape_Wordle/blob/master/images/pic13.png)
+
 ## 其他
 
 该开源项目暂未成熟，仅作个人研究与测试使用。
 如在公开系统中使用代码或代码生成的结果，烦请先取得联系。
-
-## 效果展示
-
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic0.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic1.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic2.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic3.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic4.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic5.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic6.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic7.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic8.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic9.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic10.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic11.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic12.png)
-![image](https://github.com/Kaiyiwing/Shape_Wordle/master/images/pic13.png)
