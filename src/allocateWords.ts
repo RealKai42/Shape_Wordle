@@ -65,7 +65,7 @@ function allocateWordsToRegions(
           regions[currRegion].extremePoints[0].value >= 24
         ) {
           word.regionID = currRegion
-          wordsNums[currRegion]
+          wordsNums[currRegion]--
         }
       }
       currRegion = (currRegion + 1) % regions.length
